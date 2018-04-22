@@ -3,6 +3,29 @@
 
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
+const mocha = require('gulp-mocha');
+
+// fetch command line arguments
+const arg = (argList => {
+    let arg = {}, a, opt, thisOpt, curOpt;
+    for (a = 0; a < argList.length; a += 1) {
+        thisOpt = argList[a].trim();
+        opt = thisOpt.replace(/^\-+/, '');
+
+        if (opt === thisOpt) {
+            // argument value
+            if (curOpt) {
+                arg[curOpt] = opt;
+            }
+            curOpt = null;
+        } else {
+            // argument name
+            curOpt = opt;
+            arg[curOpt] = true;
+        }
+    }
+    return arg;
+})(process.argv);
 
 gulp.task('lint', () => {
     // ESLint ignores files with "node_modules" paths.
@@ -21,7 +44,18 @@ gulp.task('lint', () => {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('default', ['lint'], function () {
+gulp.task('test', () => {
+    let defaultTests = ['tests/**/*.spec.js'];
+    let tests = defaultTests;
+    if (arg.spec) {
+        tests = ['tests/' + arg.spec + '.spec.js'];
+    }
+    gulp.src(tests, {read: false})
+        .pipe(mocha({reporter: 'list', exit: true}))
+        .on('error', console.error);
+});
+
+gulp.task('default', ['lint', 'test'], function () {
     // This will only run if the lint task is successful...
 });
 
