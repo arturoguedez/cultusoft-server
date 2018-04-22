@@ -6,7 +6,7 @@ const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
 
 // fetch command line arguments
-const arg = (argList => {
+const arg = ((argList) => {
     let arg = {}, a, opt, thisOpt, curOpt;
     for (a = 0; a < argList.length; a += 1) {
         thisOpt = argList[a].trim();
