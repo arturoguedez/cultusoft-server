@@ -5,6 +5,7 @@ const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
 const ts = require('gulp-typescript');
+const nodemon = require('gulp-nodemon');
 
 const tsProject = ts.createProject('tsconfig.json', {
     declaration: true
@@ -49,7 +50,7 @@ gulp.task('lint', () => {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', () => {
+gulp.task('test', ['scripts'], () => {
     let defaultTests = ['dist/**/*.spec.js'];
     let tests = defaultTests;
     if (arg.spec) {
@@ -60,17 +61,25 @@ gulp.task('test', () => {
         .on('error', console.error);
 });
 
-gulp.task('default', ['lint', 'test'], function () {
+gulp.task('default', ['lint', 'scripts', 'test'], () => {
     // This will only run if the lint task is successful...
 });
 
-gulp.task('scripts', function () {
+gulp.task('scripts', () => {
     return gulp.src(['src/**/*.ts'])
         .pipe(tsProject())
         .pipe(gulp.dest('dist'));
 });
 
-
-gulp.task('watch', ['scripts'], function() {
-    gulp.watch(['src/**/*.ts'], ['scripts']);
+gulp.task('watch', ['scripts'], () => {
+    return gulp.watch(['src/**/*.ts', '!src/**/*.spec.js'], ['scripts']);
 });
+
+gulp.task('dev', ['watch'], () => {
+    return nodemon({
+            script: 'dist/index.js',
+            watch: ['dist'],
+            ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts', 'dist/controllers'],
+            env: { 'NODE_ENV': 'development' }
+        });
+})
