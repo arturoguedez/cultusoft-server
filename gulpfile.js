@@ -4,6 +4,11 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
+const ts = require('gulp-typescript');
+
+const tsProject = ts.createProject('tsconfig.json', {
+    declaration: true
+});
 
 // fetch command line arguments
 const arg = ((argList) => {
@@ -32,7 +37,7 @@ gulp.task('lint', () => {
     // So, it's best to have gulp ignore the directory as well.
     // Also, Be sure to return the stream from the task;
     // Otherwise, the task may end before the stream has finished.
-    return gulp.src(['**/*.js', '!node_modules/**'])
+    return gulp.src(['src/**/*.ts', '!node_modules/**'])
         // eslint() attaches the lint output to the "eslint" property
         // of the file object so it can be used by other modules.
         .pipe(eslint())
@@ -45,10 +50,10 @@ gulp.task('lint', () => {
 });
 
 gulp.task('test', () => {
-    let defaultTests = ['tests/**/*.spec.js'];
+    let defaultTests = ['dist/**/*.spec.js'];
     let tests = defaultTests;
     if (arg.spec) {
-        tests = ['tests/' + arg.spec + '.spec.js'];
+        tests = ['dist/' + arg.spec + '.spec.js'];
     }
     gulp.src(tests, {read: false})
         .pipe(mocha({reporter: 'list', exit: true}))
@@ -59,3 +64,13 @@ gulp.task('default', ['lint', 'test'], function () {
     // This will only run if the lint task is successful...
 });
 
+gulp.task('scripts', function () {
+    return gulp.src(['src/**/*.ts'])
+        .pipe(tsProject())
+        .pipe(gulp.dest('dist'));
+});
+
+
+gulp.task('watch', ['scripts'], function() {
+    gulp.watch(['src/**/*.ts'], ['scripts']);
+});
