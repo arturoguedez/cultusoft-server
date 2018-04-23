@@ -15,7 +15,6 @@
     "co-mocha": "^1.2.2",
     "gulp": "^3.9.1",
     "gulp-eslint": "^4.0.2",
-    "gulp-istanbul": "^1.1.3",
     "gulp-mocha": "^5.0.0",
     "gulp-nodemon": "^2.2.1",
     "gulp-run-command": "0.0.9",

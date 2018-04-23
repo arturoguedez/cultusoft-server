@@ -6,7 +6,6 @@ const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
 const ts = require('gulp-typescript');
 const nodemon = require('gulp-nodemon');
-const istanbul = require('gulp-istanbul');
 const run = require('gulp-run-command').default;
 
 const tsProject = ts.createProject('tsconfig.json', {
