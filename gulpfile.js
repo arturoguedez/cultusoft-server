@@ -6,8 +6,14 @@ const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
 const ts = require('gulp-typescript');
 const nodemon = require('gulp-nodemon');
+const istanbul = require('gulp-istanbul');
+const run = require('gulp-run-command').default;
 
 const tsProject = ts.createProject('tsconfig.json', {
+    declaration: true
+});
+
+const tsTestProject = ts.createProject('tsconfig.json', {
     declaration: true
 });
 
@@ -50,23 +56,37 @@ gulp.task('lint', () => {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', ['scripts'], () => {
-    let defaultTests = ['dist/**/*.spec.js'];
-    let tests = defaultTests;
+// Runs all the test, doing validation for code coverage.
+gulp.task('code-coverage', ['test-scripts'], run("nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha --require co-mocha 'dist-test/**/*.spec.js'"));
+
+// Runs all the tests, or a single one (if --spec is passed in) without code coverage
+gulp.task('test', ['test-scripts'],  () => {
+    let defaultTests = ['dist-test/**/*.spec.js'];
+    let tests;
+
     if (arg.spec) {
-        tests = ['dist/' + arg.spec + '.spec.js'];
+        tests = ['dist-test/' + arg.spec + '.spec.js'];
+    } else {
+        tests = defaultTests;
     }
-    gulp.src(tests, {read: false})
-        .pipe(mocha({reporter: 'list', exit: true}))
-        .on('error', console.error);
+
+    return gulp.src(tests, {read: false})
+            .pipe(mocha({reporter: 'list', exit: true}))
+            .on('error', console.error);
 });
 
 gulp.task('default', ['lint', 'scripts', 'test'], () => {
     // This will only run if the lint task is successful...
 });
 
-gulp.task('scripts', () => {
+gulp.task('test-scripts', () => {
     return gulp.src(['src/**/*.ts'])
+        .pipe(tsTestProject())
+        .pipe(gulp.dest('dist-test'));
+});
+
+gulp.task('scripts', () => {
+    return gulp.src(['src/**/*.ts','!src/**/*.spec.ts'])
         .pipe(tsProject())
         .pipe(gulp.dest('dist'));
 });
@@ -75,11 +95,11 @@ gulp.task('watch', ['scripts'], () => {
     return gulp.watch(['src/**/*.ts', '!src/**/*.spec.js'], ['scripts']);
 });
 
-gulp.task('dev', ['watch'], () => {
+gulp.task('dev', ['scripts', 'watch'], () => {
     return nodemon({
             script: 'dist/index.js',
             watch: ['dist'],
-            ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts', 'dist/controllers'],
+            ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts'],
             env: { 'NODE_ENV': 'development' }
         });
 })
