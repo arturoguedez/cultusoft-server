@@ -7,6 +7,7 @@ const mocha = require('gulp-mocha');
 const ts = require('gulp-typescript');
 const nodemon = require('gulp-nodemon');
 const run = require('gulp-run-command').default;
+const clean = require('gulp-clean');
 
 const tsProject = ts.createProject('tsconfig.json', {
     declaration: true
@@ -56,10 +57,19 @@ gulp.task('lint', () => {
 });
 
 // Runs all the test, doing validation for code coverage.
-gulp.task('code-coverage', ['test-scripts'], run("nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha --require co-mocha 'dist-test/**/*.spec.js'"));
+gulp.task('code-coverage', ['test-scripts'],
+    run("nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha --require co-mocha 'dist-test/**/*.spec.js'",
+        {
+            env: {
+                NODE_ENV: 'test'
+            }
+        }
+    )
+);
 
 // Runs all the tests, or a single one (if --spec is passed in) without code coverage
 gulp.task('test', ['test-scripts'],  () => {
+    process.env.NODE_ENV = 'test';
     let defaultTests = ['dist-test/**/*.spec.js'];
     let tests;
 
@@ -78,13 +88,34 @@ gulp.task('default', ['lint', 'scripts', 'test'], () => {
     // This will only run if the lint task is successful...
 });
 
-gulp.task('test-scripts', () => {
+gulp.task('test-scripts', ['clean-test-scripts', 'test-copy-files'], () => {
+  process.env.NODE_ENV = 'test';
     return gulp.src(['src/**/*.ts'])
         .pipe(tsTestProject())
         .pipe(gulp.dest('dist-test'));
 });
 
-gulp.task('scripts', () => {
+gulp.task('test-copy-files', ['clean-test-scripts'], () => {
+    return gulp.src(['src/**/*.json', 'config/*.json'])
+      .pipe(gulp.dest('dist'));
+});
+
+gulp.task('copy-files', ['clean-scripts'], () => {
+    return gulp.src(['src/**/*.json', 'config/*.json'])
+      .pipe(gulp.dest('dist'));
+});
+
+gulp.task('clean-test-scripts', function () {
+  return gulp.src('dist-test', {read: false})
+    .pipe(clean());
+});
+
+gulp.task('clean-scripts', function () {
+  return gulp.src('dist', {read: false})
+    .pipe(clean());
+});
+
+gulp.task('scripts', ['clean-scripts', 'copy-files'], () => {
     return gulp.src(['src/**/*.ts','!src/**/*.spec.ts'])
         .pipe(tsProject())
         .pipe(gulp.dest('dist'));
@@ -95,6 +126,7 @@ gulp.task('watch', ['scripts'], () => {
 });
 
 gulp.task('dev', ['scripts', 'watch'], () => {
+    process.env.NODE_ENV = 'development';
     return nodemon({
             script: 'dist/index.js',
             watch: ['dist'],
