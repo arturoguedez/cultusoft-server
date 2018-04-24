@@ -89,7 +89,6 @@ gulp.task('default', ['lint', 'scripts', 'test'], () => {
 });
 
 gulp.task('test-scripts', ['clean-test-scripts', 'test-copy-files'], () => {
-  process.env.NODE_ENV = 'test';
     return gulp.src(['src/**/*.ts'])
         .pipe(tsTestProject())
         .pipe(gulp.dest('dist-test'));
