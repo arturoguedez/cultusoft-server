@@ -8,7 +8,7 @@ class App {
         this.mountRoutes();
     }
 
-    private mountRoutes() : void {
+    private mountRoutes(): void {
         const router = express.Router();
         router.get('/', (req, res) => {
             res.json({
