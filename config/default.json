@@ -1,5 +1,11 @@
 {
   "server": {
     "port": 3000
+  },
+  "google": {
+    "bigQuery": {
+      "projectId": "freefitnesstracker",
+      "dataSet" : "arturo_development2"
+    }
   }
 }

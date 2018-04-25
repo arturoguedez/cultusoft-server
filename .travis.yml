@@ -5,4 +5,5 @@ node_js:
 before_script:
     npm i -g npm@5.8.0
     npm install -g gulp-cli
+    npm install -g codecov
 scritp: gulp
