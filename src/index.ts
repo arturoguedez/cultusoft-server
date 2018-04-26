@@ -1,7 +1,7 @@
 import app from './app';
 const config = require('config');
 // import BigQueryHelper from './helpers/bigquery';
-import MigrationRunner from './helpers/migrationRunner';
+import MigrationRunner from './data/migrationRunner';
 
 const port = process.env.PORT || config.get('server').port;
 

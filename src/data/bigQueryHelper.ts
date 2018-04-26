@@ -40,15 +40,16 @@ export class BigQueryHelper {
             console.log(dataset.id)
             dataSetsArray.push(dataset.id);
           });
-          return new Promise(function (resolve) {
-              resolve(dataSetsArray);
-          });
+          return Promise.resolve(dataSetsArray);
         })
         .catch(err => {
           console.error('ERROR:', err);
         });
     }
-
+    //https://cloud.google.com/nodejs/docs/reference/bigquery/1.2.x/Table#insert
+    public insert(datasetId:string , tableId:string, rows, options, callback) {
+      INSERT A RECORD INO THE MIGRATION THING
+    }
     public deleteDataset(datasetId) {
       const dataset = this.bigquery.dataset(datasetId);
 
