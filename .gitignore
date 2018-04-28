@@ -64,3 +64,4 @@ dist-test/
 
 config/development.json
 config/production.json
+src/debug.json
