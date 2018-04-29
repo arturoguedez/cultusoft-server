@@ -1,5 +1,5 @@
 import { Migration } from './migration';
-import { BigQueryHelper } from './bigQueryHelper';
+import { BigQueryService } from '../services/bigQueryService';
 
 export class SetTableMetaDataMigration extends Migration {
     private tableId: string;
@@ -15,14 +15,14 @@ export class SetTableMetaDataMigration extends Migration {
         this.description = content.description;
     }
 
-    public up(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public up(bigQueryService: BigQueryService, dataSet: string) {
         if (!this.tableId || !this.schema) {
             return Promise.reject("Table id or schema not defined")
         }
-        return bigQueryHelper.setTableMetaData(dataSet, this.tableId, this.schema, this.name, this.description);
+        return bigQueryService.setTableMetaData(dataSet, this.tableId, this.schema, this.name, this.description);
     }
 
-    public down(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public down(bigQueryService: BigQueryService, dataSet: string) {
         return Promise.resolve();
     }
 }

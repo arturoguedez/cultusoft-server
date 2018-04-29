@@ -1,7 +1,7 @@
-import { BigQueryHelper } from './bigQueryHelper';
+import { BigQueryService } from '../services/bigQueryService';
 
 export interface MigrationInterface {
-    up(bigQueryHelper: BigQueryHelper, dataSet: string);
-    down(bigQueryHelper: BigQueryHelper, dataSet: string);
+    up(bigQueryService: BigQueryService, dataSet: string);
+    down(bigQueryService: BigQueryService, dataSet: string);
     getName(): string;
 }

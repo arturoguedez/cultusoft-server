@@ -1,5 +1,5 @@
 import { Migration } from './migration';
-import { BigQueryHelper } from './bigQueryHelper';
+import { BigQueryService } from '../services/bigQueryService';
 const fs = require(`fs`);
 
 export class CreateTableMigration extends Migration {
@@ -12,18 +12,18 @@ export class CreateTableMigration extends Migration {
         this.schema = content.schema;
     }
 
-    public up(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public up(bigQueryService: BigQueryService, dataSet: string) {
         if (!this.tableId || !this.schema) {
             return Promise.reject("Table id or schema not defined")
         };
-        return bigQueryHelper.createTable(dataSet, this.tableId, this.schema);
+        return bigQueryService.createTable(dataSet, this.tableId, this.schema);
     }
 
-    public down(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public down(bigQueryService: BigQueryService, dataSet: string) {
         if (!this.tableId || !this.schema) {
             return Promise.reject("Table id or schema not defined")
         };
-        return bigQueryHelper.deleteTable(dataSet, this.tableId);
+        return bigQueryService.deleteTable(dataSet, this.tableId);
     }
 }
 

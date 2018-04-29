@@ -1,5 +1,5 @@
 import { Migration } from './migration';
-import { BigQueryHelper } from './bigQueryHelper';
+import { BigQueryService } from '../services/bigQueryService';
 
 export class InsertTableMigration extends Migration {
     private tableId: string;
@@ -12,14 +12,14 @@ export class InsertTableMigration extends Migration {
         this.rows = content.rows;
     }
 
-    public up(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public up(bigQueryService: BigQueryService, dataSet: string) {
         if (!this.tableId) {
             return Promise.reject("Table id is not defined")
         };
-        return bigQueryHelper.insert(dataSet, this.tableId, this.rows, null);
+        return bigQueryService.insert(dataSet, this.tableId, this.rows, null);
     }
 
-    public down(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public down(bigQueryService: BigQueryService, dataSet: string) {
         return Promise.resolve();
     }
 }

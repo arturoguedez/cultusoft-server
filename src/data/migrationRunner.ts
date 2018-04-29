@@ -1,7 +1,7 @@
 // Imports the Google Cloud client library
 const BigQuery = require('@google-cloud/bigquery');
 const config = require('config');
-import BigQueryHelper from './bigQueryHelper';
+import BigQueryService from '../services/bigQueryService';
 import { MigrationRegistry } from './migrationRegistry';
 import { MigrationFactory } from './migrationFactory';
 import { MigrationInterface } from './migrationInterface';
@@ -21,7 +21,7 @@ export class MigrationRunner {
     }
 
     private initDataset(datasetId: string) {
-        return BigQueryHelper.listDatasets().then((dataSets) => {
+        return BigQueryService.listDatasets().then((dataSets) => {
             let dataSetExists: boolean = dataSets.some((dataSet) => {
                 return dataSet === datasetId;
             });
@@ -29,14 +29,14 @@ export class MigrationRunner {
             if (dataSetExists) {
                 return Promise.resolve();
             } else {
-                return BigQueryHelper.createDateSet(datasetId);
+                return BigQueryService.createDateSet(datasetId);
             }
         }
         );
     }
 
     private initMigrationTable(datasetId: string) {
-        return BigQueryHelper.listTables(datasetId).then((tableNames) => {
+        return BigQueryService.listTables(datasetId).then((tableNames) => {
             let migrationTableExists: boolean = tableNames.some((tableName) => {
                 return tableName === this.migrationsTableName;
             });
@@ -44,7 +44,7 @@ export class MigrationRunner {
             if (migrationTableExists) {
                 return Promise.resolve();
             } else {
-                return BigQueryHelper.createTable(datasetId, this.migrationsTableName, 'Name:STRING, AppliedOn:TIMESTAMP')
+                return BigQueryService.createTable(datasetId, this.migrationsTableName, 'Name:STRING, AppliedOn:TIMESTAMP')
             }
         })
     };
@@ -60,14 +60,14 @@ export class MigrationRunner {
             let migration = migrationFactory.create(migrationName);
             console.log(`calling UP for ${migrationName}`);
             migration
-                .up(BigQueryHelper, datasetId)
+                .up(BigQueryService, datasetId)
                 .then(() => {
                     const toInsert = {
                         Name: migrationName,
                         AppliedOn: new Date()
                     }
                     console.log(`Migration ${migrationName} applied successfully`);
-                    BigQueryHelper.insert(datasetId, this.migrationsTableName, toInsert, null)
+                    BigQueryService.insert(datasetId, this.migrationsTableName, toInsert, null)
                         .then((data) => {
                             return resolve();
                         })
@@ -77,7 +77,7 @@ export class MigrationRunner {
                 })
                 .catch((err) => {
                     console.log(`calling DOWN for ${migrationName}`);
-                    migration.down(BigQueryHelper, datasetId)
+                    migration.down(BigQueryService, datasetId)
                         .then(() => {
                             reject(`Unable to apply migration ${migrationName}. It has been rolled back. Error: ${JSON.stringify(err)}`);
                         })

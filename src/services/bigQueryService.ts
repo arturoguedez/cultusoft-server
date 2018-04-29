@@ -2,7 +2,7 @@
 const BigQuery = require('@google-cloud/bigquery');
 const config = require('config');
 
-export class BigQueryHelper {
+export class BigQueryService {
     // Your Google Cloud Platform project ID
     private projectId: string;
     private bigquery;
@@ -139,4 +139,4 @@ export class BigQueryHelper {
     }
 
 }
-export default new BigQueryHelper();
+export default new BigQueryService();

@@ -1,5 +1,5 @@
 import { MigrationInterface } from './migrationInterface';
-import { BigQueryHelper } from './bigQueryHelper';
+import { BigQueryService } from '../services/bigQueryService';
 
 export class Migration implements MigrationInterface {
     private _name: string;
@@ -8,10 +8,10 @@ export class Migration implements MigrationInterface {
         this._name = name;
     }
 
-    public up(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public up(bigQueryService: BigQueryService, dataSet: string) {
     }
 
-    public down(bigQueryHelper: BigQueryHelper, dataSet: string) {
+    public down(bigQueryService: BigQueryService, dataSet: string) {
     }
 
     public getName() {
