@@ -1,6 +1,6 @@
 {
   "type": "createTable",
-  "tableId": "test4",
+  "tableId": "test5",
   "schema": [{
       "description": "first column",
       "mode": "REQUIRED",

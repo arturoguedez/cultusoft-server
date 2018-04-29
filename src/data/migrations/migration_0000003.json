@@ -1,4 +1,5 @@
 {
+  "type": "setTableMetadDataMigration",
   "tableId": "test3",
   "schema": "Name:STRING, Name2:STRING,servings:integer, cookingTime:float, quick:boolean",
   "name": "This is my name yo",

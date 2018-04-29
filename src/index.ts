@@ -5,18 +5,11 @@ import MigrationRunner from './data/migrationRunner';
 
 const port = process.env.PORT || config.get('server').port;
 
-console.log("About to call big query");
-// BigQueryHelper.createDateSet('arturo_development2')
-//   .then(() => {
-//     return BigQueryHelper.listDatasets();
-//   })
-//   .then(() => {
-//     return BigQueryHelper.createTable('arturo_development2', 'table1',
-//     'Name:string, Age:integer, Weight:float, IsMagic:boolean')
-//     //return BigQueryHelper.deleteDataset('arturo_development2');
-//   });
-
-MigrationRunner.runMigrations(config.get('google').bigQuery.dataSet);
+MigrationRunner.runMigrations(config.get('google').bigQuery.dataSet).then(() => {
+    console.log("migrations applied");
+}).catch((err) => {
+    console.log(err);
+});
 //
 // app.listen(port, (err) => {
 //   if (err) {

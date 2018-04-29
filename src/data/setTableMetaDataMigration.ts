@@ -7,9 +7,8 @@ export class SetTableMetaDataMigration extends Migration {
     private name: string;
     private description: string;
 
-    constructor(name: string) {
+    constructor(name: string, content: any) {
         super(name);
-        let content = this.getContent();
         this.tableId = content.tableId;
         this.schema = content.schema;
         this.name = content.name;

@@ -6,9 +6,8 @@ export class InsertTableMigration extends Migration {
     private rows = [];
     private description: string;
 
-    constructor(name: string) {
+    constructor(name: string, content: any) {
         super(name);
-        let content = this.getContent();
         this.tableId = content.tableId;
         this.rows = content.rows;
     }

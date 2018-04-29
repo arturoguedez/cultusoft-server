@@ -6,9 +6,8 @@ export class CreateTableMigration extends Migration {
     private tableId: string;
     private schema: string;
 
-    constructor(name: string) {
+    constructor(name: string, content: any) {
         super(name);
-        let content = this.getContent();
         this.tableId = content.tableId;
         this.schema = content.schema;
     }

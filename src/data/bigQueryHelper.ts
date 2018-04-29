@@ -77,9 +77,11 @@ export class BigQueryHelper {
                 .dataset(datasetId)
                 .createTable(tableId, options)
                 .then(results => {
+                    console.log("what");
                     resolve(results[0]);
                 })
                 .catch(err => {
+                    console.log("========>  " + err);
                     reject(err);
                 });
         });

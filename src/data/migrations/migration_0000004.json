@@ -1,4 +1,5 @@
 {
+  "type": "insertTable",
   "tableId": "test3",
   "rows": [{
       "Name": "here is a name"
