@@ -60,8 +60,7 @@ describe('data/migratioFactory', function() {
             }`;
             let fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
-
-            expect(new MigrationFactory().create('foo')).to.throw(Error, 'Unknown migration type a_bad_one');
+            expect(() => new MigrationFactory().create('foo')).to.throw(Error, 'Unknown migration type a_bad_one');
         });
 
     });

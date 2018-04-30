@@ -9,9 +9,11 @@ export class Migration implements MigrationInterface {
     }
 
     public up(bigQueryService: BigQueryService, dataSet: string) {
+        return Promise.resolve();
     }
 
     public down(bigQueryService: BigQueryService, dataSet: string) {
+        return Promise.resolve();
     }
 
     public getName() {

@@ -15,14 +15,14 @@ export class SetTableMetaDataMigration extends Migration {
         this.description = content.description;
     }
 
-    public up(bigQueryService: BigQueryService, dataSet: string) {
+    public up(bigQueryService: BigQueryService, dataSet: string): Promise<any> {
         if (!this.tableId || !this.schema) {
             return Promise.reject("Table id or schema not defined")
         }
         return bigQueryService.setTableMetaData(dataSet, this.tableId, this.schema, this.name, this.description);
     }
 
-    public down(bigQueryService: BigQueryService, dataSet: string) {
+    public down(bigQueryService: BigQueryService, dataSet: string): Promise<any> {
         return Promise.resolve();
     }
 }

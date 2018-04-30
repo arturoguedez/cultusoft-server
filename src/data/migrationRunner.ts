@@ -8,20 +8,22 @@ import { MigrationInterface } from './migrationInterface';
 
 export class MigrationRunner {
     // Your Google Cloud Platform project ID
-    private projectId: string;
+    // private projectId: string;
     private migrationsTableName: string;
-    private bigquery;
+    private bigQueryService: BigQueryService;
+    // private bigquery;
 
     constructor() {
-        this.projectId = config.get('google').bigQuery.projectId;
-        this.bigquery = new BigQuery({
-            projectId: this.projectId,
-        });
+        // this.projectId = config.get('google').bigQuery.projectId;
+        // this.bigquery = new BigQuery({
+        //     projectId: this.projectId,
+        // });
         this.migrationsTableName = 'migrations';
+        this.bigQueryService = new BigQueryService();
     }
 
     private initDataset(datasetId: string) {
-        return BigQueryService.listDatasets().then((dataSets) => {
+        return this.bigQueryService.listDatasets().then((dataSets) => {
             let dataSetExists: boolean = dataSets.some((dataSet) => {
                 return dataSet === datasetId;
             });
@@ -29,14 +31,14 @@ export class MigrationRunner {
             if (dataSetExists) {
                 return Promise.resolve();
             } else {
-                return BigQueryService.createDateSet(datasetId);
+                return this.bigQueryService.createDateSet(datasetId);
             }
         }
         );
     }
 
     private initMigrationTable(datasetId: string) {
-        return BigQueryService.listTables(datasetId).then((tableNames) => {
+        return this.bigQueryService.listTables(datasetId).then((tableNames) => {
             let migrationTableExists: boolean = tableNames.some((tableName) => {
                 return tableName === this.migrationsTableName;
             });
@@ -44,7 +46,7 @@ export class MigrationRunner {
             if (migrationTableExists) {
                 return Promise.resolve();
             } else {
-                return BigQueryService.createTable(datasetId, this.migrationsTableName, 'Name:STRING, AppliedOn:TIMESTAMP')
+                return this.bigQueryService.createTable(datasetId, this.migrationsTableName, 'Name:STRING, AppliedOn:TIMESTAMP')
             }
         })
     };
@@ -60,14 +62,14 @@ export class MigrationRunner {
             let migration = migrationFactory.create(migrationName);
             console.log(`calling UP for ${migrationName}`);
             migration
-                .up(BigQueryService, datasetId)
+                .up(this.bigQueryService, datasetId)
                 .then(() => {
                     const toInsert = {
                         Name: migrationName,
                         AppliedOn: new Date()
                     }
                     console.log(`Migration ${migrationName} applied successfully`);
-                    BigQueryService.insert(datasetId, this.migrationsTableName, toInsert, null)
+                    this.bigQueryService.insert(datasetId, this.migrationsTableName, toInsert, null)
                         .then((data) => {
                             return resolve();
                         })
@@ -77,7 +79,7 @@ export class MigrationRunner {
                 })
                 .catch((err) => {
                     console.log(`calling DOWN for ${migrationName}`);
-                    migration.down(BigQueryService, datasetId)
+                    migration.down(this.bigQueryService, datasetId)
                         .then(() => {
                             reject(`Unable to apply migration ${migrationName}. It has been rolled back. Error: ${JSON.stringify(err)}`);
                         })
@@ -97,10 +99,7 @@ export class MigrationRunner {
         let registry: string[] = new MigrationRegistry().getRegistry();
 
         return new Promise<string[]>((resolve, reject) => {
-            this.bigquery
-                .dataset(datasetId)
-                .table(this.migrationsTableName)
-                .getRows()
+            this.bigQueryService.getRows(datasetId, this.migrationsTableName)
                 .then(results => {
                     const rows = results[0];
                     let pendingMigration = registry.filter((registeredMigration) => {

@@ -86,7 +86,7 @@ export class BigQueryService {
                 });
         });
     }
-    public setTableMetaData(datasetId: string, tableId: string, schema: string, name: string, description: string) {
+    public setTableMetaData(datasetId: string, tableId: string, schema: string, name: string, description: string): Promise<any> {
         const metadata = {
             schema: schema,
             name: name,
@@ -106,6 +106,19 @@ export class BigQueryService {
         });
     }
 
+    public getRows(datasetId: string, tableId: string): Promise<any> {
+        return this.bigquery.getRows(datasetId, tableId)
+            .dataset(datasetId)
+            .table(tableId)
+            .getRows()
+            .then(results => {
+                const rows = results[0];
+                return Promise.resolve(rows);
+            })
+            .catch((err) => {
+                return Promise.reject(err);
+            });
+    }
     public listTables(datasetId: string) {
         return this.bigquery
             .dataset(datasetId)
@@ -124,19 +137,19 @@ export class BigQueryService {
             });
     }
 
-    public deleteTable(datasetId: string, tableId: string) {
+    public deleteTable(datasetId: string, tableId: string): Promise<any> {
         // Deletes the table
-        this.bigquery
+        return this.bigquery
             .dataset(datasetId)
             .table(tableId)
             .delete()
             .then(() => {
-                console.log(`Table ${tableId} deleted.`);
+                return Promise.resolve();
             })
             .catch(err => {
-                console.error('ERROR:', err);
+                return Promise.reject(err);
             });
     }
 
 }
-export default new BigQueryService();
+export default BigQueryService;
