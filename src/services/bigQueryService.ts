@@ -19,11 +19,11 @@ export class BigQueryService {
             .createDataset(datasetName)
             .then(results => {
                 const dataset = results[0];
-
                 console.log(`Dataset ${dataset.id} created.`);
+                return Promise.resolve();
             })
             .catch(err => {
-                console.error('ERROR:', err);
+                return Promise.reject(err);
             });
     }
 
@@ -38,8 +38,8 @@ export class BigQueryService {
                 });
                 return Promise.resolve(dataSetsArray);
             })
-            .catch(err => {
-                console.error('ERROR:', err);
+            .catch((err) => {
+                return Promise.reject(err);
             });
     }
     // https://cloud.google.com/nodejs/docs/reference/bigquery/1.2.x/Table#insert
@@ -61,9 +61,11 @@ export class BigQueryService {
             .delete()
             .then(() => {
                 console.log(`Dataset ${dataset.id} deleted.`);
+                return Promise.resolve();
             })
             .catch(err => {
                 console.error('ERROR:', err);
+                return Promise.reject(err);
             });
     }
 
@@ -72,38 +74,33 @@ export class BigQueryService {
             schema: schema,
         };
         // Create a new table in the dataset
-        return new Promise((resolve, reject) => {
-            this.bigquery
-                .dataset(datasetId)
-                .createTable(tableId, options)
-                .then(results => {
-                    console.log("what");
-                    resolve(results[0]);
-                })
-                .catch(err => {
-                    console.log("========>  " + err);
-                    reject(err);
-                });
-        });
+        return this.bigquery
+            .dataset(datasetId)
+            .createTable(tableId, options)
+            .then(results => {
+                return Promise.resolve(results[0]);
+            })
+            .catch(err => {
+                return Promise.reject(err);
+            });
     }
+
     public setTableMetaData(datasetId: string, tableId: string, schema: string, name: string, description: string): Promise<any> {
         const metadata = {
             schema: schema,
             name: name,
             description: description
         };
-        return new Promise((resolve, reject) => {
-            this.bigquery
-                .dataset(datasetId)
-                .table(tableId)
-                .setMetadata(metadata)
-                .then(results => {
-                    resolve({ metadata: results[0], apiResponse: results[1] });
-                })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+        return this.bigquery
+            .dataset(datasetId)
+            .table(tableId)
+            .setMetadata(metadata)
+            .then(results => {
+                return Promise.resolve({ metadata: results[0], apiResponse: results[1] });
+            })
+            .catch(err => {
+                return Promise.reject(err);
+            });
     }
 
     public getRows(datasetId: string, tableId: string): Promise<any> {

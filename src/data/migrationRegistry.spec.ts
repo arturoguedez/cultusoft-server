@@ -4,18 +4,18 @@ import { MigrationRegistry } from './migrationRegistry';
 import fs = require('fs');
 import sinon = require('sinon');
 
-describe('data/migrationRegistry', function() {
+describe('data/migrationRegistry', () => {
     let sandbox;
 
-    beforeEach('prepare sandbox', function() {
+    beforeEach('prepare sandbox', () => {
         sandbox = sinon.sandbox.create();
     });
 
-    afterEach('restore sandbox', function() {
+    afterEach('restore sandbox', () => {
         sandbox.restore();
     });
 
-    it('getRegistry()', function() {
+    it('getRegistry()', () => {
         let stubbedMigrations = ['migration_01.json', 'migration_02.json']
         let fsStub = sandbox.stub(fs, 'readdirSync');
         fsStub.withArgs(`${__dirname}/migrations/`).returns(stubbedMigrations);

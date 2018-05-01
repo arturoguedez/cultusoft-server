@@ -2,22 +2,21 @@
 import { expect } from 'chai';
 import { CreateTableMigration } from './createTableMigration';
 import { BigQueryService } from '../services/bigQueryService';
-import fs = require('fs');
 import sinon = require('sinon');
 
-describe('data/createTableMigration', function() {
+describe('data/createTableMigration', () => {
     let sandbox;
 
-    beforeEach('prepare sandbox', function() {
+    beforeEach('prepare sandbox', () => {
         sandbox = sinon.sandbox.create();
     });
 
-    afterEach('restore sandbox', function() {
+    afterEach('restore sandbox', () => {
         sandbox.restore();
     });
 
-    describe('up()', function() {
-        it('missing table id', function(done) {
+    describe('up()', () => {
+        it('missing table id', (done) => {
             let stub = sandbox.createStubInstance(BigQueryService);
             let migration = new CreateTableMigration('name', { schema: 'schema' });
             migration.up(stub, 'datasetId').catch((err) => {
@@ -61,8 +60,8 @@ describe('data/createTableMigration', function() {
         });
     });
 
-    describe('down()', function() {
-        it('missing table id', function(done) {
+    describe('down()', () => {
+        it('missing table id', (done) => {
             let stub = sandbox.createStubInstance(BigQueryService);
             let migration = new CreateTableMigration('name', { schema: 'schema' });
             migration.down(stub, 'datasetId').catch((err) => {

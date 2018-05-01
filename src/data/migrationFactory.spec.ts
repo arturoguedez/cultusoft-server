@@ -10,19 +10,19 @@ import { SetTableMetaDataMigration } from './setTableMetaDataMigration';
 import fs = require('fs');
 import sinon = require('sinon');
 
-describe('data/migratioFactory', function() {
+describe('data/migratioFactory', () => {
     let sandbox;
 
-    beforeEach('prepare sandbox', function() {
+    beforeEach('prepare sandbox', () => {
         sandbox = sinon.sandbox.create();
     });
 
-    afterEach('restore sandbox', function() {
+    afterEach('restore sandbox', () => {
         sandbox.restore();
     });
 
-    describe('create()', function() {
-        it('CreateTableMigration', function() {
+    describe('create()', () => {
+        it('CreateTableMigration', () => {
             let stubbedMigrationContent = `{
               "type": "createTable"
             }`;
@@ -32,7 +32,7 @@ describe('data/migratioFactory', function() {
             let migration = new MigrationFactory().create('foo');
             expect(migration instanceof CreateTableMigration).to.be.true;
         });
-        it('InsertTableMigration', function() {
+        it('InsertTableMigration', () => {
             let stubbedMigrationContent = `{
               "type": "insertTable"
             }`;
@@ -43,7 +43,7 @@ describe('data/migratioFactory', function() {
             expect(migration instanceof InsertTableMigration).to.be.true;
         });
 
-        it('SetTableMetaDataMigration', function() {
+        it('SetTableMetaDataMigration', () => {
             let stubbedMigrationContent = `{
               "type": "setTableMetadDataMigration"
             }`;
@@ -54,7 +54,7 @@ describe('data/migratioFactory', function() {
             expect(migration instanceof SetTableMetaDataMigration).to.be.true;
         });
 
-        it('unknown type', function() {
+        it('unknown type', () => {
             let stubbedMigrationContent = `{
               "type": "a_bad_one"
             }`;
