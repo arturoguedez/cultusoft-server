@@ -16,7 +16,7 @@ export class MigrationDownHandler {
                 return Promise.resolve();
             })
             .catch((err) => {
-                return Promise.reject(`Rollback failed for migration ${migration.getName()}. Error: ${JSON.stringify(err)}`);
+                return Promise.reject(`Rollback failed for migration '${migration.getName()}'. Error: ${JSON.stringify(err)}`);
             });
     }
 }
