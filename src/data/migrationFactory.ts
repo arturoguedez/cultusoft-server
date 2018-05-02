@@ -9,17 +9,17 @@ export class MigrationFactory {
         return JSON.parse(readFileSync(`${__dirname}/migrations/${name}`, "UTF-8"));
     }
 
-    public create(name: string): MigrationInterface {
+    public create(name: string): Promise<MigrationInterface> {
         let content = this.getContent(name);
         switch (content.type) {
             case 'createTable':
-                return new CreateTableMigration(name, content);
+                return Promise.resolve(new CreateTableMigration(name, content));
             case 'insertTable':
-                return new InsertTableMigration(name, content);
+                return Promise.resolve(new InsertTableMigration(name, content));
             case 'setTableMetadDataMigration':
-                return new SetTableMetaDataMigration(name, content);
+                return Promise.resolve(new SetTableMetaDataMigration(name, content));
             default:
-                throw new Error(`Unknown migration type ${content.type}`);
+                return Promise.reject(`Unknown migration type ${content.type}`);
         }
     }
 }

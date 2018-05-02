@@ -22,46 +22,57 @@ describe('data/migratioFactory', () => {
     });
 
     describe('create()', () => {
-        it('CreateTableMigration', () => {
+        it('CreateTableMigration', (done) => {
             let stubbedMigrationContent = `{
               "type": "createTable"
             }`;
             let fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
-            let migration = new MigrationFactory().create('foo');
-            expect(migration instanceof CreateTableMigration).to.be.true;
+            new MigrationFactory().create('foo').then((migration) => {
+                expect(migration instanceof CreateTableMigration).to.be.true;
+                done();
+            });
+
         });
-        it('InsertTableMigration', () => {
+
+        it('InsertTableMigration', (done) => {
             let stubbedMigrationContent = `{
               "type": "insertTable"
             }`;
             let fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
-            let migration = new MigrationFactory().create('foo');
-            expect(migration instanceof InsertTableMigration).to.be.true;
+            new MigrationFactory().create('foo').then((migration) => {
+                expect(migration instanceof InsertTableMigration).to.be.true;
+                done();
+            });
         });
 
-        it('SetTableMetaDataMigration', () => {
+        it('SetTableMetaDataMigration', (done) => {
             let stubbedMigrationContent = `{
               "type": "setTableMetadDataMigration"
             }`;
             let fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
-            let migration = new MigrationFactory().create('foo');
-            expect(migration instanceof SetTableMetaDataMigration).to.be.true;
+            new MigrationFactory().create('foo').then((migration) => {
+                expect(migration instanceof SetTableMetaDataMigration).to.be.true;
+                done();
+            });
         });
 
-        it('unknown type', () => {
+        it('unknown type', (done) => {
             let stubbedMigrationContent = `{
               "type": "a_bad_one"
             }`;
             let fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
-            expect(() => new MigrationFactory().create('foo')).to.throw(Error, 'Unknown migration type a_bad_one');
-        });
 
+            new MigrationFactory().create('foo').catch((err) => {
+                expect(err).to.be.equals('Unknown migration type a_bad_one');
+                done();
+            });
+        });
     });
 });
