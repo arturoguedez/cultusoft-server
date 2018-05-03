@@ -80,7 +80,7 @@ gulp.task('test', ['test-scripts'],  () => {
     }
 
     return gulp.src(tests, {read: false})
-            .pipe(mocha({reporter: 'list', exit: true}))
+            .pipe(mocha({reporter: 'spec', exit: true}))
             .on('error', console.error);
 });
 
