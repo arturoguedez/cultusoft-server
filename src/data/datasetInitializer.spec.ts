@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { BigQueryService } from '../services/bigQueryService';
 import DatasetInitializer from './datasetInitializer';
-import sinon = require('sinon');
+import * as sinon from 'sinon';
 
 describe('data/datasetInitializer', () => {
     let sandbox;

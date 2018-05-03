@@ -14,12 +14,11 @@ export class BigQueryService {
         });
     }
 
-    public createDateSet(datasetName: string) {
+    public createDateSet(datasetId: string) {
+
         return this.bigquery
-            .createDataset(datasetName)
+            .createDataset(datasetId)
             .then(results => {
-                const dataset = results[0];
-                console.log(`Dataset ${dataset.id} created.`);
                 return Promise.resolve();
             })
             .catch(err => {
@@ -50,23 +49,14 @@ export class BigQueryService {
             options = {};
         }
 
-        return table.insert(rows, options);
+        return table.insert(rows, options)
+            .then(data => Promise.resolve(data[0]))
+            .catch(err => Promise.reject(err));
     }
 
     public deleteDataset(datasetId) {
         const dataset = this.bigquery.dataset(datasetId);
-
-        // Deletes the dataset
-        return dataset
-            .delete()
-            .then(() => {
-                console.log(`Dataset ${dataset.id} deleted.`);
-                return Promise.resolve();
-            })
-            .catch(err => {
-                console.error('ERROR:', err);
-                return Promise.reject(err);
-            });
+        return dataset.delete();
     }
 
     public createTable(datasetId: string, tableId: string, schema: string) {
@@ -96,7 +86,7 @@ export class BigQueryService {
             .table(tableId)
             .setMetadata(metadata)
             .then(results => {
-                return Promise.resolve({ metadata: results[0], apiResponse: results[1] });
+                return Promise.resolve(results[0]);
             })
             .catch(err => {
                 return Promise.reject(err);
@@ -104,7 +94,7 @@ export class BigQueryService {
     }
 
     public getRows(datasetId: string, tableId: string): Promise<any> {
-        return this.bigquery.getRows(datasetId, tableId)
+        return this.bigquery
             .dataset(datasetId)
             .table(tableId)
             .getRows()
@@ -129,9 +119,7 @@ export class BigQueryService {
 
                 return Promise.resolve(tablesArray);
             })
-            .catch(err => {
-                console.error('ERROR:', err);
-            });
+            .catch(err => Promise.reject(err));
     }
 
     public deleteTable(datasetId: string, tableId: string): Promise<any> {

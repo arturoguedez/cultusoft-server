@@ -11,7 +11,7 @@ export class MigrationApplier {
     constructor(bigQueryService: BigQueryService, migrationsTableName: string) {
         this.migrationFactory = new MigrationFactory();
         this.migrationUpHandler = new MigrationUpHandler(bigQueryService, migrationsTableName);
-        this.migrationDownHandler = new MigrationDownHandler(bigQueryService, migrationsTableName);
+        this.migrationDownHandler = new MigrationDownHandler(bigQueryService);
     }
 
     public applyMigrations(datasetId: string, pendingMigrations: string[]) {
@@ -30,7 +30,7 @@ export class MigrationApplier {
                     .catch((err) => {
                         return this.migrationDownHandler.handleDown(datasetId, migration)
                             .then(() => {
-                                return Promise.reject(`Migration ${migration.getName()} has been rolled back.`)
+                                return Promise.reject(`Migration ${migration.getName()} has been rolled back. Error from up(): ${err}`)
                             }).catch((err) => {
                                 return Promise.reject(err);
                             });

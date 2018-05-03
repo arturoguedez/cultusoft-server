@@ -2,11 +2,9 @@ import { BigQueryService } from '../services/bigQueryService';
 import { MigrationInterface } from './migrationInterface';
 
 export class MigrationDownHandler {
-    private migrationsTableName: string;
     private bigQueryService: BigQueryService;
 
-    constructor(bigQueryService: BigQueryService, migrationsTableName: string) {
-        this.migrationsTableName = this.migrationsTableName;
+    constructor(bigQueryService: BigQueryService) {
         this.bigQueryService = bigQueryService;
     }
 

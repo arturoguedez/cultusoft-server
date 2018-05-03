@@ -4,8 +4,8 @@
   },
   "google": {
     "bigQuery": {
-      "projectId": "freefitnesstracker",
-      "dataSet" : "arturo_development2"
+      "projectId": "",
+      "dataSet": ""
     }
   }
 }

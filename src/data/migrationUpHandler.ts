@@ -6,20 +6,19 @@ export class MigrationUpHandler {
     private bigQueryService: BigQueryService;
 
     constructor(bigQueryService: BigQueryService, migrationsTableName: string) {
-        this.migrationsTableName = this.migrationsTableName;
+        this.migrationsTableName = migrationsTableName;
         this.bigQueryService = bigQueryService;
     }
 
     public handleUp(datasetId: string, migration: MigrationInterface) {
         let migrationName = migration.getName();
-        console.log(`calling UP for ${migrationName}`);
         return migration.up(this.bigQueryService, datasetId)
             .then(() => {
                 const toInsert = {
                     Name: migrationName,
                     AppliedOn: new Date()
                 }
-                console.log(`Migration ${migrationName} applied successfully`);
+
                 return this.bigQueryService.insert(datasetId, this.migrationsTableName, toInsert, null)
                     .then(() => {
                         return Promise.resolve();

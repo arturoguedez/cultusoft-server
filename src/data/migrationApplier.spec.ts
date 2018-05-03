@@ -64,7 +64,7 @@ describe('data/migrationApplier', function() {
             let pendingMigrations = ['migration_one'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .catch((err) => {
-                    expect(err).to.be.equals('Migration migration_name has been rolled back.');
+                    expect(err).to.be.equals('Migration migration_name has been rolled back. Error from up(): Unknown migration type');
                     done()
                 });
         });
@@ -189,7 +189,7 @@ describe('data/migrationApplier', function() {
                     expect(migrationOneReverted).to.be.equals(0);
                     expect(migrationTwoReverted).to.be.equals(1);
                     expect(migrationThreeReverted).to.be.equals(0);
-                    expect(err).to.be.equals('Migration migration_two has been rolled back.');
+                    expect(err).to.be.equals('Migration migration_two has been rolled back. Error from up(): failed to complete');
                     done();
                 });
         });

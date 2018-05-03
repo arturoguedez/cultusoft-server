@@ -27,7 +27,7 @@ describe('data/migrationDownHandler', function() {
                 return Promise.resolve();
             });
 
-            new MigrationDownHandler(bigQueryServiceStub, 'migration').handleDown(datasetId, migrationStub)
+            new MigrationDownHandler(bigQueryServiceStub).handleDown(datasetId, migrationStub)
                 .then(() => {
                     done()
                 });
@@ -48,7 +48,7 @@ describe('data/migrationDownHandler', function() {
                 return 'migration_name';
             });
 
-            new MigrationDownHandler(bigQueryServiceStub, 'migration').handleDown(datasetId, migrationStub)
+            new MigrationDownHandler(bigQueryServiceStub).handleDown(datasetId, migrationStub)
                 .catch((err) => {
                     expect(err).to.be.equals(`Rollback failed for migration 'migration_name'. Error: "There was an error"`);
                     done()
