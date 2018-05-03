@@ -7,3 +7,5 @@ before_script:
     npm install -g gulp-cli
     npm install -g codecov
 scritp: gulp
+after_success:
+  - codecov
