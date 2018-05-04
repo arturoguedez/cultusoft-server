@@ -1,5 +1,6 @@
 import app from './app';
 const config = require('config');
+import logger from './utils/logger';
 
 import { MigrationRunner } from './data/migrationRunner';
 import { BigQueryService } from './services/bigQueryService';
@@ -7,9 +8,9 @@ import { BigQueryService } from './services/bigQueryService';
 const port = process.env.PORT || config.get('server').port;
 
 new MigrationRunner(new BigQueryService()).runMigrations(config.get('google').bigQuery.dataSet).then(() => {
-    console.log("migrations applied");
+    logger.info("migrations applied");
 }).catch((err) => {
-    console.log(err);
+    logger.error(err);
 });
 //
 // app.listen(port, (err) => {
