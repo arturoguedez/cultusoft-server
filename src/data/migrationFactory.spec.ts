@@ -14,7 +14,7 @@ describe('data/migratioFactory', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
-        sandbox = sinon.sandbox.create();
+        sandbox = sinon.createSandbox();
     });
 
     afterEach('restore sandbox', () => {

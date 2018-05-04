@@ -8,7 +8,7 @@ describe('data/createTableMigration', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
-        sandbox = sinon.sandbox.create();
+        sandbox = sinon.createSandbox();
     });
 
     afterEach('restore sandbox', () => {
