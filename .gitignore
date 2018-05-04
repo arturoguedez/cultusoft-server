@@ -63,5 +63,7 @@ dist/
 dist-test/
 
 config/development.json
+config/development.json5
 config/production.json
+config/production.json5
 src/debug.json
