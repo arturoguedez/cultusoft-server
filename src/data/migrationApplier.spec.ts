@@ -12,7 +12,7 @@ describe('data/migrationApplier', function() {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
-        sandbox = sinon.sandbox.create();
+        sandbox = sinon.createSandbox();
     });
 
     afterEach('restore sandbox', () => {

@@ -38,6 +38,7 @@
       "dist-test/**/*.spec.js",
       "dist-test/**/*Interface.js",
       "dist-test/index.js",
+      "dist-test/utils/logger.js",
       "dist-test/app.js"
     ],
     "include": [
