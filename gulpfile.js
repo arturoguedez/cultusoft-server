@@ -128,7 +128,7 @@ gulp.task('dev', ['scripts', 'watch'], () => {
     process.env.NODE_ENV = 'development';
     return nodemon({
             script: 'dist/index.js',
-            watch: ['dist'],
+            watch: ['dist/controllers/**/*.js'],
             ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts'],
             env: { 'NODE_ENV': 'development' }
         });

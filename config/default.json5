@@ -9,6 +9,9 @@
     }
   },
   logger: {
-      level: 'info'    
+    level: 'info'
+  },
+  jwt: {
+    secret: 'yes sir'
   }
 }

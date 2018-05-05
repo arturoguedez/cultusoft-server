@@ -7,16 +7,17 @@ import { BigQueryService } from './services/bigQueryService';
 
 const port = process.env.PORT || config.get('server').port;
 
-new MigrationRunner(new BigQueryService()).runMigrations(config.get('google').bigQuery.dataSet).then(() => {
-    logger.info("migrations applied");
-}).catch((err) => {
-    logger.error(err);
-});
-//
-// app.listen(port, (err) => {
-//   if (err) {
-//     return console.log(err);
-//   }
-//
-//   return console.log(`server is listening on ${port}`);
-// });
+new MigrationRunner(new BigQueryService()).runMigrations(config.get('google').bigQuery.dataSet)
+    .then(() => {
+        logger.info("migrations applied");
+    }).then(() => {
+        app.listen(port, (err) => {
+            if (err) {
+                return logger.error(err);
+            }
+
+            return logger.info(`server is listening on ${port}`);
+        });
+    }).catch((err) => {
+        logger.error(err);
+    });
