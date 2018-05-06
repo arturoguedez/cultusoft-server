@@ -1,6 +1,7 @@
 import * as express from 'express';
 import organizationRoutes from './routes/organization';
 import * as cookieParser from 'cookie-parser';
+// import { Authentication } from './middleware/authentication';
 
 class App {
     public express;
@@ -15,6 +16,7 @@ class App {
         this.express.use(express.json());
         this.express.use(express.urlencoded({ extended: false }));
         this.express.use(cookieParser());
+        // this.express.use(new Authentication().setup());
     }
     private mountRoutes(): void {
         const router = express.Router();

@@ -15,7 +15,6 @@ export class BigQueryService {
     }
 
     public createDateSet(datasetId: string) {
-
         return this.bigquery
             .createDataset(datasetId)
             .then(results => {

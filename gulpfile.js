@@ -19,7 +19,8 @@ const tsTestProject = ts.createProject('tsconfig.json', {
 
 // fetch command line arguments
 const arg = ((argList) => {
-    let arg = {}, a, opt, thisOpt, curOpt;
+    let arg = {},
+        a, opt, thisOpt, curOpt;
     for (a = 0; a < argList.length; a += 1) {
         thisOpt = argList[a].trim();
         opt = thisOpt.replace(/^\-+/, '');
@@ -58,17 +59,15 @@ gulp.task('lint', () => {
 
 // Runs all the test, doing validation for code coverage.
 gulp.task('code-coverage', ['test-scripts'],
-    run("nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha --require co-mocha 'dist-test/**/*.spec.js'",
-        {
-            env: {
-                NODE_ENV: 'test'
-            }
+    run("nyc --check-coverage --lines 95 --functions 95 --branches 95 mocha --require co-mocha 'dist-test/**/*.spec.js'", {
+        env: {
+            NODE_ENV: 'test'
         }
-    )
+    })
 );
 
 // Runs all the tests, or a single one (if --spec is passed in) without code coverage
-gulp.task('test', ['test-scripts'],  () => {
+gulp.task('test', ['test-scripts'], () => {
     process.env.NODE_ENV = 'test';
     let defaultTests = ['dist-test/**/*.spec.js'];
     let tests;
@@ -79,9 +78,14 @@ gulp.task('test', ['test-scripts'],  () => {
         tests = defaultTests;
     }
 
-    return gulp.src(tests, {read: false})
-            .pipe(mocha({reporter: 'spec', exit: true}))
-            .on('error', console.error);
+    return gulp.src(tests, {
+            read: false
+        })
+        .pipe(mocha({
+            reporter: 'spec',
+            exit: true
+        }))
+        .on('error', console.error);
 });
 
 gulp.task('default', ['lint', 'scripts', 'test'], () => {
@@ -96,26 +100,30 @@ gulp.task('test-scripts', ['clean-test-scripts', 'test-copy-files'], () => {
 
 gulp.task('test-copy-files', ['clean-test-scripts'], () => {
     return gulp.src(['src/**/*.json', 'config/*.json'])
-      .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist'));
 });
 
 gulp.task('copy-files', ['clean-scripts'], () => {
     return gulp.src(['src/**/*.json', 'config/*.json'])
-      .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist'));
 });
 
-gulp.task('clean-test-scripts', function () {
-  return gulp.src('dist-test', {read: false})
-    .pipe(clean());
+gulp.task('clean-test-scripts', function() {
+    return gulp.src('dist-test', {
+            read: false
+        })
+        .pipe(clean());
 });
 
-gulp.task('clean-scripts', function () {
-  return gulp.src('dist', {read: false})
-    .pipe(clean());
+gulp.task('clean-scripts', function() {
+    return gulp.src('dist', {
+            read: false
+        })
+        .pipe(clean());
 });
 
 gulp.task('scripts', ['clean-scripts', 'copy-files'], () => {
-    return gulp.src(['src/**/*.ts','!src/**/*.spec.ts'])
+    return gulp.src(['src/**/*.ts', '!src/**/*.spec.ts'])
         .pipe(tsProject())
         .pipe(gulp.dest('dist'));
 });
@@ -127,9 +135,11 @@ gulp.task('watch', ['scripts'], () => {
 gulp.task('dev', ['scripts', 'watch'], () => {
     process.env.NODE_ENV = 'development';
     return nodemon({
-            script: 'dist/index.js',
-            watch: ['dist/controllers/**/*.js'],
-            ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts'],
-            env: { 'NODE_ENV': 'development' }
-        });
+        script: 'dist/index.js',
+        watch: ['dist/controllers/**/*.js', 'dist/routes/**/*.js', 'dist/services/**/*.js', 'dist/models/**/*.js', 'dist/middleware/**/*.js'],
+        ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts'],
+        env: {
+            'NODE_ENV': 'development'
+        }
+    });
 })

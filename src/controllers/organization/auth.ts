@@ -7,7 +7,6 @@ import { UserInterface } from '../../models/UserInterface';
 const config = require('config');
 
 export class Auth {
-
     public constructor() {
         passport.use("jwt", this.getStrategy());
         passport.initialize();
@@ -62,16 +61,13 @@ export class Auth {
                         return done(null, false, { message: "The user in the token was not found" });
                     }
 
-                    return done(null, { username: user.username });
+                    return done(null, { username: user.username, roles: user.roles });
                 })
                 .catch(err => {
                     return done(err);
                 });
-
-
         });
     }
-
 }
 
 export default new Auth();

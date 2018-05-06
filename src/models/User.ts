@@ -12,6 +12,7 @@ export class User {
         // bigQueryService.query()
         return Promise.resolve({
             username: 'hello',
+            roles: ['guest'],
             comparePassword: (password) => {
                 console.log("given passwr" + password);
                 return Promise.resolve(password === 'password');
