@@ -2,19 +2,9 @@ import * as moment from "moment";
 import User from '../../models/User';
 import { UserInterface } from '../../models/UserInterface';
 const config = require('config');
-import { Passport } from '../../middleware/passport';
 import * as jwt from "jwt-simple";
 
 export class Auth {
-    private passport: Passport;
-
-    public constructor(passport: Passport) {
-        this.passport = passport;
-    }
-
-    public authenticate(callback) {
-        return this.passport.authenticate(callback);
-    }
 
     public login = async (req, res) => {
         try {

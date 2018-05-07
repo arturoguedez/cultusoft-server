@@ -1,18 +1,24 @@
 'use strict';
 import { Auth } from '../controllers/organization/auth';
 import logger from '../utils/logger';
+import { Passport } from './../middleware/passport';
 
 export class JtwVertification {
-    private readonly auth: Auth;
+    private passport: Passport;
 
-    public constructor(auth: Auth) {
-        this.auth = auth;
+    public constructor(passport: Passport) {
+        this.passport = passport;
+    }
+
+    private authenticate(callback) {
+        return this.passport.authenticate(callback);
     }
 
     public setup() {
         const self = this;
         return (req, res, next) => {
-            self.auth.authenticate((err, user, info) => {
+            logger.debug("in the jwt middleware");
+            self.authenticate((err, user, info) => {
                 if (err) {
                     return next(err);
                 }

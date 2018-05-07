@@ -8,33 +8,44 @@ import { UserInterface } from '../models/UserInterface';
 const config = require('config');
 import * as acl from 'acl';
 
-export class AuthorizationMiddleware {
+
+import { BigQueryService } from '../services/bigQueryService';
+
+export class AclMiddleware {
     private readonly acl;
 
     public constructor() {
         this.acl = new acl(new acl.memoryBackend());
+        this.loadAcl();
+    }
+
+    private loadAcl() {
+        let bigQueryService = new BigQueryService();
+
+        let query =
+            `
+          SELECT *
+          FROM acl
+          `;
+
+
+        bigQueryService.query(config.get('google').bigQuery.dataSet, query)
+            .then((result) => {
+                let allowedList = result;
+                let allow = [];
+                allowedList.forEach((allowed) => {
+                    allow.push({
+                        roles: allowed.role,
+                        allows: [{ resources: allowed.resource, permissions: allowed.permission }]
+                    });
+                })
+
+                this.acl.allow(allow);
+            });
     }
 
     public setup() {
-        this.acl.allow([
-            {
-                roles: ['guest', 'member'],
-                allows: [
-                    { resources: '/organization/user/info/', permissions: 'get' },
-                    { resources: 'blogs', permissions: 'get' },
-                    { resources: ['forums', 'news'], permissions: ['get', 'put', 'delete'] }
-                ]
-            },
-            {
-                roles: ['gold', 'silver'],
-                allows: [
-                    { resources: 'cash', permissions: ['sell', 'exchange'] },
-                    { resources: ['account', 'deposit'], permissions: ['put', 'delete'] }
-                ]
-            }
-        ])
         let self = this;
-
         return function(req, res, next) {
             if (req.context && req.context.user) {
                 let roles = req.context.user.roles;
@@ -59,4 +70,4 @@ export class AuthorizationMiddleware {
     }
 }
 
-export default AuthorizationMiddleware;
+export default AclMiddleware;

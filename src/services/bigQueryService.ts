@@ -25,6 +25,29 @@ export class BigQueryService {
             });
     }
 
+    public query(datasetId: string, query: string, options?) {
+        const dataset = this.bigquery.dataset(datasetId);
+
+        if (!options) {
+            options = {
+                query: query,
+                useLegacySql: false
+            }
+        }
+        return dataset.query(options)
+            .then(results => {
+                console.log("Got this in the results");
+                console.log(JSON.stringify(results));
+                return Promise.resolve(results[0]);
+            })
+            .catch((err) => {
+                console.log("err!!")
+                console.log(JSON.stringify(err));
+                return Promise.reject("boo");
+            })
+    };
+
+
     public listDatasets() {
         return this.bigquery
             .getDatasets()
