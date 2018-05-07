@@ -1,13 +1,18 @@
 import * as express from 'express';
-import Auth from '../controllers/organization/auth';
+import { Auth } from '../controllers/organization/auth';
 import User from '../controllers/organization/user';
 import JtwVertification from '../middleware/jwt';
-import Authorization from '../middleware/authorization';
+import AuthorizationMiddleware from '../middleware/AuthorizationMiddleware';
+import { Passport } from '../middleware/passport';
 
 class Organization {
     public readonly router;
-
+    private readonly auth: Auth;
+    private readonly authenticatePrivate;
     constructor() {
+        this.auth = new Auth(new Passport());
+        this.authenticatePrivate = [new JtwVertification(this.auth).setup(), new AuthorizationMiddleware().setup()];
+
         this.router = express.Router();
         this.mountRoutes();
     }
@@ -20,9 +25,11 @@ class Organization {
         });
 
 
-        this.router.post('/auth/login/', Auth.login);
+        this.router.post('/auth/login/', this.auth.login);
 
-        this.router.get('/user/info/', [new JtwVertification(Auth).setup(), new Authorization().setup()], User.info);
+        console.log("what is going on ");
+
+        this.router.get('/user/info/', this.authenticatePrivate, User.info);
     }
 
 }

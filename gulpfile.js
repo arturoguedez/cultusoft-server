@@ -8,6 +8,7 @@ const ts = require('gulp-typescript');
 const nodemon = require('gulp-nodemon');
 const run = require('gulp-run-command').default;
 const clean = require('gulp-clean');
+const tslint = require("gulp-tslint");
 
 const tsProject = ts.createProject('tsconfig.json', {
     declaration: true
@@ -39,6 +40,16 @@ const arg = ((argList) => {
     }
     return arg;
 })(process.argv);
+
+gulp.task("tslint", () =>
+    gulp.src(['src/**/*.ts', '!node_modules/**'])
+    .pipe(tslint({
+        formatter: "prose"
+    }))
+    .pipe(tslint.report({
+        summarizeFailureOutput: true
+    }))
+);
 
 gulp.task('lint', () => {
     // ESLint ignores files with "node_modules" paths.

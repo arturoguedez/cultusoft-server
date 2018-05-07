@@ -21,3 +21,8 @@ new MigrationRunner(new BigQueryService()).runMigrations(config.get('google').bi
     }).catch((err) => {
         logger.error(err);
     });
+    /*
+TODO:
+  Move passport to a middleware?
+  load roles from BigQueryService
+  */

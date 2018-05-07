@@ -1,7 +1,7 @@
 import * as express from 'express';
 import organizationRoutes from './routes/organization';
 import * as cookieParser from 'cookie-parser';
-// import { Authentication } from './middleware/authentication';
+import logger from './utils/logger';
 
 class App {
     public express;
@@ -12,13 +12,14 @@ class App {
         this.mountRoutes();
     }
 
-    private setupMiddlewares(): void {
+    private setupMiddlewares() {
         this.express.use(express.json());
         this.express.use(express.urlencoded({ extended: false }));
         this.express.use(cookieParser());
-        // this.express.use(new Authentication().setup());
+        this.express.use(require("morgan")("combined", { "stream": logger.stream }));
     }
-    private mountRoutes(): void {
+
+    private mountRoutes() {
         const router = express.Router();
 
         router.get('/', (req, res) => {
@@ -35,6 +36,5 @@ class App {
         // sorta tried this one but it kinda fails
         // https://medium.com/front-end-hacking/learn-using-jwt-with-passport-authentication-9761539c4314
     }
-
 }
 export default new App().express;

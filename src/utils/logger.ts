@@ -23,6 +23,12 @@ class Logger {
                 }),
             )
         });
+        let self = this;
+        this.logger.stream = {
+            write: function(message, encoding) {
+                self.logger.info(message);
+            }
+        };
     }
 }
 export default new Logger().logger;
