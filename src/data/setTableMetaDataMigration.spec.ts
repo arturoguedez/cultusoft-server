@@ -17,8 +17,8 @@ describe('data/setTableMetaDataMigration', function() {
 
     describe('up()', () => {
         it('missing table id', (done) => {
-            let stub = sandbox.createStubInstance(BigQueryService);
-            let migration = new SetTableMetaDataMigration('name', { schema: 'schema' });
+            const stub = sandbox.createStubInstance(BigQueryService);
+            const migration = new SetTableMetaDataMigration('name', { schema: 'schema' });
             migration.up(stub, 'datasetId').catch((err) => {
                 expect(err).to.be.equal('Table id or schema not defined');
                 done();
@@ -26,8 +26,8 @@ describe('data/setTableMetaDataMigration', function() {
         });
 
         it('missing schema', (done) => {
-            let stub = sandbox.createStubInstance(BigQueryService);
-            let migration = new SetTableMetaDataMigration('name', { tableId: 'id' });
+            const stub = sandbox.createStubInstance(BigQueryService);
+            const migration = new SetTableMetaDataMigration('name', { tableId: 'id' });
             migration.up(stub, 'datasetId').catch((err) => {
                 expect(err).to.be.equal('Table id or schema not defined');
                 done();
@@ -35,24 +35,24 @@ describe('data/setTableMetaDataMigration', function() {
         });
 
         it('resolving', (done) => {
-            let stub = sandbox.createStubInstance(BigQueryService);
+            const stub = sandbox.createStubInstance(BigQueryService);
             stub.setTableMetaData.restore();
             sandbox.stub(stub, "setTableMetaData").callsFake(() => {
                 return Promise.resolve();
             });
 
-            let migration = new SetTableMetaDataMigration('name', { tableId: 'id', schema: 'schema' });
+            const migration = new SetTableMetaDataMigration('name', { tableId: 'id', schema: 'schema' });
             migration.up(stub, 'datasetId').then(() => done());
         });
 
         it('rejected', (done) => {
-            let stub = sandbox.createStubInstance(BigQueryService);
+            const stub = sandbox.createStubInstance(BigQueryService);
             stub.setTableMetaData.restore();
             sandbox.stub(stub, "setTableMetaData").callsFake(() => {
                 return Promise.reject('error from stub');
             });
 
-            let migration = new SetTableMetaDataMigration('name', { tableId: 'id', schema: 'schema' });
+            const migration = new SetTableMetaDataMigration('name', { tableId: 'id', schema: 'schema' });
             migration.up(stub, 'datasetId').catch((err) => {
                 expect(err).to.be.equal('error from stub');
                 done();
@@ -62,15 +62,15 @@ describe('data/setTableMetaDataMigration', function() {
 
     // The Down function doesn't do anything by default. So it always resolves.
     describe('down()', () => {
-        it('missing table id', function(done) {
-            let stub = sandbox.createStubInstance(BigQueryService);
-            let migration = new SetTableMetaDataMigration('name', { schema: 'schame' });
+        it('missing table id', (done) => {
+            const stub = sandbox.createStubInstance(BigQueryService);
+            const migration = new SetTableMetaDataMigration('name', { schema: 'schame' });
             migration.down(stub, 'datasetId').then(() => done());
         });
 
         it('resolving', (done) => {
-            let stub = sandbox.createStubInstance(BigQueryService);
-            let migration = new SetTableMetaDataMigration('name', { tableId: 'id', schema: 'schema' });
+            const stub = sandbox.createStubInstance(BigQueryService);
+            const migration = new SetTableMetaDataMigration('name', { tableId: 'id', schema: 'schema' });
             migration.down(stub, 'datasetId').then(() => done());
         });
     });

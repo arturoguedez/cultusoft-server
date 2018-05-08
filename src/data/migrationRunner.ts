@@ -3,6 +3,7 @@ import { MigrationApplier } from './migrationApplier';
 import { PendingMigrationRetriever } from './pendingMigrationRetriever';
 import { MigrationTableInitializer } from './migrationTableInitializer';
 import { DatasetInitializer } from './datasetInitializer';
+import logger from '../utils/logger';
 
 export class MigrationRunner {
     private migrationsTableName: string;
@@ -29,20 +30,17 @@ export class MigrationRunner {
         return new PendingMigrationRetriever(this.bigQueryService, this.migrationsTableName).getPendingMigrations(datasetId);
     }
 
-    public runMigrations(datasetId: string) {
-        return this.initDataset(datasetId)
-            .then(() => {
-                return this.initMigrationTable(datasetId);
-            })
-            .then(() => {
-                return this.getPendingMigrations(datasetId);
-            })
-            .then((pendingMigrations: string[]) => {
-                return this.applyMigrations(datasetId, pendingMigrations);
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+    public async runMigrations(datasetId: string): Promise<any> {
+        try {
+            await this.initDataset(datasetId)
+            await this.initMigrationTable(datasetId);
+            let pendingMigrations: string[] = await this.getPendingMigrations(datasetId)
+            await this.applyMigrations(datasetId, pendingMigrations);
+            logger.info("migrations applied");
+            return Promise.resolve();
+        } catch (error) {
+            return Promise.reject(error);
+        };
     }
 }
 export default MigrationRunner;

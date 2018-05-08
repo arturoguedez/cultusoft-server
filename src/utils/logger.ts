@@ -1,14 +1,13 @@
-const config = require('config');
-const winston = require('winston');
+import config = require('config');
+import winston = require('winston');
+
+import { ILoggerConfig } from './configs';
 
 class Logger {
     public logger;
 
     constructor() {
         this.logger = winston.createLogger({
-            transports: [
-                new winston.transports.Console({ level: config.get('logger').level })
-            ],
             format: winston.format.combine(
                 winston.format.colorize(),
                 winston.format.timestamp(),
@@ -20,12 +19,16 @@ class Logger {
 
                     const ts = timestamp.slice(0, 19).replace('T', ' ');
                     return `${ts} [${level}]: ${message} ${Object.keys(args).length ? JSON.stringify(args, null, 2) : ''}`;
-                }),
-            )
+                })
+            ),
+            transports: [
+                new winston.transports.Console({ level: config.get<LoggerConfig>('logger').level })
+            ]
         });
-        let self = this;
+
+        const self = this;
         this.logger.stream = {
-            write: function(message, encoding) {
+            write: (message, encoding) => {
                 self.logger.info(message);
             }
         };

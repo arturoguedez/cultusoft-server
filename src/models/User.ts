@@ -1,4 +1,3 @@
-import { UserInterface } from './UserInterface';
 import { BigQueryService } from '../services/bigQueryService';
 
 export class User {
@@ -8,17 +7,21 @@ export class User {
         this.bigQueryService = new BigQueryService();
     }
 
-    public findAuthenticationInformation(username: string): Promise<UserInterface> {
-        // bigQueryService.query()
+    public findAuthenticationInformation(username: string): Promise<IUser> {
         return Promise.resolve({
-            username: 'hello',
-            roles: ['guest'],
             comparePassword: (password) => {
-                console.log("given passwr" + password);
                 return Promise.resolve(password === 'password');
-            }
+            },
+            roles: ['organization_admin'],
+            username: 'hello'
         });
     }
+}
+
+export interface IUser {
+    username: string;
+    comparePassword(password: string): Promise<boolean>;
+    roles: string[];
 }
 
 export default new User();

@@ -1,21 +1,25 @@
 import * as express from 'express';
-import { Auth } from '../controllers/organization/auth';
+import AclMiddleware from '../middleware/aclMiddleware';
 import User from '../controllers/organization/user';
 import JtwVertification from '../middleware/jwt';
-import AclMiddleware from '../middleware/aclMiddleware';
+import { Auth } from '../controllers/organization/auth';
 import { Passport } from '../middleware/passport';
 
-class Organization {
+export class OrganizationRoutes {
     public readonly router;
     private readonly auth: Auth;
     private readonly authenticatePrivate;
 
-    constructor() {
+    constructor(acl) {
         this.auth = new Auth();
-        this.authenticatePrivate = [new JtwVertification(new Passport()).setup(), new AclMiddleware().setup()];
+        this.authenticatePrivate = [new JtwVertification(new Passport()).setup(), new AclMiddleware(acl).setup()];
 
         this.router = express.Router();
         this.mountRoutes();
+    }
+
+    public getRouter() {
+        return this.router;
     }
 
     private mountRoutes(): void {
@@ -25,10 +29,8 @@ class Organization {
             });
         });
 
-
         this.router.post('/auth/login/', this.auth.login);
         this.router.get('/user/info/', this.authenticatePrivate, User.info);
     }
-
 }
-export default new Organization().router;
+export default OrganizationRoutes;

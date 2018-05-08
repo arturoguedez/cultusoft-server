@@ -1,5 +1,5 @@
-import { Migration } from './migration';
 import { BigQueryService } from '../services/bigQueryService';
+import { Migration } from './migration';
 
 export class SetTableMetaDataMigration extends Migration {
     private tableId: string;
@@ -17,7 +17,7 @@ export class SetTableMetaDataMigration extends Migration {
 
     public up(bigQueryService: BigQueryService, dataSet: string): Promise<any> {
         if (!this.tableId || !this.schema) {
-            return Promise.reject("Table id or schema not defined")
+            return Promise.reject('Table id or schema not defined');
         }
         return bigQueryService.setTableMetaData(dataSet, this.tableId, this.schema, this.name, this.description);
     }

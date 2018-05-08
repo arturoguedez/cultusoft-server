@@ -1,7 +1,7 @@
+import * as BigQuery from '@google-cloud/bigquery';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { BigQueryService } from './bigQueryService';
-import * as BigQuery from '@google-cloud/bigquery';
 
 describe('services/bigQueryService', () => {
 
@@ -12,12 +12,12 @@ describe('services/bigQueryService', () => {
     });
 
     afterEach('restore sandbox', () => {
-        sandbox.restore()
+        sandbox.restore();
     });
 
     describe('createDateSet()', () => {
         it('fails', (done) => {
-            let datasetId = 'sample';
+            const datasetId = 'sample';
 
             sandbox.stub(BigQuery.prototype, 'createDataset').callsFake(() => {
                 return Promise.reject('There was an error');
@@ -31,7 +31,7 @@ describe('services/bigQueryService', () => {
         });
 
         it('succeeds', (done) => {
-            let datasetId = 'sample';
+            const datasetId = 'sample';
             sandbox.stub(BigQuery.prototype, 'createDataset').callsFake(() => {
                 return Promise.resolve();
             });
@@ -75,32 +75,31 @@ describe('services/bigQueryService', () => {
         it('fails to find project', (done) => {
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
-                    table: (tableId) => {
+                    table: (theTableId) => {
                         return {
-                            insert: (rows, options) => {
+                            insert: (theRows, theOptions) => {
                                 return Promise.reject({
                                     ApiError: 'Not found: Project the-fake-project-id',
                                     code: 404,
                                     errors:
                                         [{
-                                            message: 'Not found: Project fake-project-id',
                                             domain: 'global',
+                                            message: 'Not found: Project fake-project-id',
                                             reason: 'notFound'
                                         }],
-                                    response: undefined,
-                                    message: 'Not found: Project fake-project-id'
+                                    message: 'Not found: Project fake-project-id',
+                                    response: undefined
                                 });
                             }
-                        }
+                        };
                     }
                 };
-
             });
 
-            let datasetId = 'datasetid'
-            let tableId = 'tableid';
-            let rows = [{ Name: 'the_name' }];
-            let options = null;
+            const datasetId = 'datasetid';
+            const tableId = 'tableid';
+            const rows = [{ Name: 'the_name' }];
+            const options = null;
             new BigQueryService().insert(datasetId, tableId, rows, options)
                 .catch((err) => {
                     expect(err.ApiError).to.be.equals('Not found: Project the-fake-project-id');
@@ -111,32 +110,31 @@ describe('services/bigQueryService', () => {
         it('fails to find dataset', (done) => {
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
-                    table: (tableId) => {
+                    table: (theTableId) => {
                         return {
-                            insert: (rows, options) => {
+                            insert: (theRows, theOptions) => {
                                 return Promise.reject({
                                     ApiError: 'Not found: Dataset the-fake-project-id:datasetid',
                                     code: 404,
                                     errors:
                                         [{
-                                            message: 'Not found: Dataset the-fake-project-id:datasetid',
                                             domain: 'global',
+                                            message: 'Not found: Dataset the-fake-project-id:datasetid',
                                             reason: 'notFound'
                                         }],
-                                    response: undefined,
-                                    message: 'Not found: Dataset the-fake-project-id:datasetid'
+                                    message: 'Not found: Dataset the-fake-project-id:datasetid',
+                                    response: undefined
                                 });
                             }
-                        }
+                        };
                     }
                 };
-
             });
 
-            let datasetId = 'datasetid'
-            let tableId = 'tableid';
-            let rows = [{ Name: 'the_name' }];
-            let options = {};
+            const datasetId = 'datasetid';
+            const tableId = 'tableid';
+            const rows = [{ Name: 'the_name' }];
+            const options = {};
             new BigQueryService().insert(datasetId, tableId, rows, options)
                 .catch((err) => {
                     expect(err.ApiError).to.be.equals('Not found: Dataset the-fake-project-id:datasetid');
@@ -147,45 +145,44 @@ describe('services/bigQueryService', () => {
         it('fails to insert into table', (done) => {
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
-                    table: (tableId) => {
+                    table: (theTableId) => {
                         return {
-                            insert: (rows, options) => {
+                            insert: (theRows, theOptions) => {
                                 return Promise.reject({
-                                    "errors": [{
-                                        "errors": [{
-                                            "message": "no such field.",
-                                            "reason": "invalid"
+                                    errors: [{
+                                        errors: [{
+                                            message: 'no such field.',
+                                            reason: 'invalid'
                                         }],
-                                        "row": {
-                                            "Name": "the_name"
+                                        row: {
+                                            Name: 'the_name'
                                         }
                                     }],
-                                    "response": {
-                                        "kind": "bigquery#tableDataInsertAllResponse",
-                                        "insertErrors": [{
-                                            "index": 0,
-                                            "errors": [{
-                                                "reason": "invalid",
-                                                "location": "name",
-                                                "debugInfo": "",
-                                                "message": "no such field."
-                                            }]
-                                        }]
-                                    },
-                                    "message": "A failure occurred during this request.",
-                                    name: "PartialFailureError"
+                                    message: 'A failure occurred during this request.',
+                                    name: 'PartialFailureError',
+                                    response: {
+                                        insertErrors: [{
+                                            errors: [{
+                                                debugInfo: '',
+                                                location: 'name',
+                                                message: 'no such field.',
+                                                reason: 'invalid'
+                                            }],
+                                            index: 0
+                                        }],
+                                        kind: 'bigquery#tableDataInsertAllResponse'
+                                    }
                                 });
                             }
-                        }
+                        };
                     }
                 };
-
             });
 
-            let datasetId = 'testdatasetid'
-            let tableId = 'testtable';
-            let rows = [{ Name: 'the_name' }];
-            let options = {};
+            const datasetId = 'testdatasetid';
+            const tableId = 'testtable';
+            const rows = [{ Name: 'the_name' }];
+            const options = {};
             new BigQueryService().insert(datasetId, tableId, rows, options)
                 .catch((err) => {
                     expect(err.message).to.be.equals('A failure occurred during this request.');
@@ -196,22 +193,19 @@ describe('services/bigQueryService', () => {
         it('succeeds', (done) => {
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
-                    table: (tableId) => {
+                    table: (theTableId) => {
                         return {
-                            insert: (rows, options) => {
+                            insert: (theRows, theOptions) => {
                                 return Promise.resolve([]);
                             }
-                        }
+                        };
                     }
                 };
             });
 
-
-            let datasetId = 'testdatasetid'
-            let tableId = 'testtable';
-            let rows = [{ Name: 'the_name' }];
-            let options = {};
-            new BigQueryService().insert(datasetId, tableId, rows, options)
+            const rows = [{ Name: 'the_name' }];
+            const options = {};
+            new BigQueryService().insert('datasetId', 'tableId', rows, options)
                 .then(() => {
                     done();
                 });
@@ -220,14 +214,13 @@ describe('services/bigQueryService', () => {
 
     describe('deleteDataset()', () => {
         it('fails', (done) => {
-            let datasetId = 'sample';
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
                     delete: (datasetId) => Promise.reject('There was an error')
-                }
+                };
             });
 
-            new BigQueryService().deleteDataset(datasetId)
+            new BigQueryService().deleteDataset('datasetId')
                 .catch((err) => {
                     expect(err).to.be.equals('There was an error');
                     done();
@@ -235,15 +228,14 @@ describe('services/bigQueryService', () => {
         });
 
         it('succeeds', (done) => {
-            let datasetId = 'sample';
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
                     delete: (datasetId) => Promise.resolve(),
                     id: 'the_id'
-                }
+                };
             });
 
-            new BigQueryService().deleteDataset(datasetId)
+            new BigQueryService().deleteDataset('datasetId')
                 .then(() => {
                     done();
                 });
@@ -255,7 +247,7 @@ describe('services/bigQueryService', () => {
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
                     createTable: (tableId, options) => Promise.reject('There was an error')
-                }
+                };
             });
 
             new BigQueryService().createTable('dataset_id', 'table_id', 'schema')
@@ -269,7 +261,7 @@ describe('services/bigQueryService', () => {
             sandbox.stub(BigQuery.prototype, 'dataset').callsFake(() => {
                 return {
                     createTable: (tableId, options) => Promise.resolve(['the result'])
-                }
+                };
             });
 
             new BigQueryService().createTable('dataset_id', 'table_id', 'schema')
@@ -289,9 +281,9 @@ describe('services/bigQueryService', () => {
                             setMetadata: (metadata) => {
                                 return Promise.reject('There was an error');
                             }
-                        }
+                        };
                     }
-                }
+                };
             });
 
             new BigQueryService().setTableMetaData('dataset_id', 'table_id', 'schema', 'name', 'description')
@@ -309,9 +301,9 @@ describe('services/bigQueryService', () => {
                             setMetadata: (metadata) => {
                                 return Promise.resolve(['the result']);
                             }
-                        }
+                        };
                     }
-                }
+                };
             });
 
             new BigQueryService().setTableMetaData('dataset_id', 'table_id', 'schema', 'name', 'description')
@@ -331,7 +323,7 @@ describe('services/bigQueryService', () => {
                             getRows: (metadata) => {
                                 return Promise.reject('There was an error');
                             }
-                        }
+                        };
                     }
                 };
             });
@@ -351,7 +343,7 @@ describe('services/bigQueryService', () => {
                             getRows: (metadata) => {
                                 return Promise.resolve(['the result']);
                             }
-                        }
+                        };
                     }
                 };
             });
@@ -409,7 +401,7 @@ describe('services/bigQueryService', () => {
                             delete: () => {
                                 return Promise.reject('There was an error');
                             }
-                        }
+                        };
                     }
                 };
             });
@@ -429,7 +421,7 @@ describe('services/bigQueryService', () => {
                             delete: () => {
                                 return Promise.resolve();
                             }
-                        }
+                        };
                     }
                 };
             });

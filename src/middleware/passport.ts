@@ -3,24 +3,24 @@ import * as passport from "passport";
 import * as moment from "moment";
 import { Strategy, ExtractJwt } from "passport-jwt";
 import User from '../models/User';
-import { UserInterface } from '../models/UserInterface';
-const config = require('config');
+import config = require('config');
 import logger from '../utils/logger';
+import { IJWTConfig } from '../utils/configs';
 
 export class Passport {
 
     public constructor() {
-        passport.use("jwt", this.getStrategy());
+        passport.use('jwt', this.getStrategy());
         passport.initialize();
     }
 
     public authenticate(callback) {
-        return passport.authenticate("jwt", { session: false, failWithError: true }, callback);
+        return passport.authenticate('jwt', { session: false, failWithError: true }, callback);
     };
 
     private getStrategy = (): Strategy => {
         const params = {
-            secretOrKey: config.get('jwt').secret,
+            secretOrKey: config.get<IJWTConfig>('jwt').secret,
             jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
             passReqToCallback: true
         };
@@ -29,7 +29,7 @@ export class Passport {
             User.findAuthenticationInformation(payload.username)
                 .then(user => {
                     if (user === null) {
-                        return done(null, false, { message: "The user in the token was not found" });
+                        return done(null, false, { message: 'The user in the token was not found' });
                     }
                     return done(null, { username: user.username, roles: user.roles });
                 })

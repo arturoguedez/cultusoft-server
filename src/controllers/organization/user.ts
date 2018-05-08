@@ -1,8 +1,5 @@
 export class User {
-    public constructor() {
-    }
-
-    public info = async (req, res) => {
+    public info(req, res): Promise<any> {
         return Promise.resolve(res.status(200).json({ a: 'you got the info' }));
     }
 }

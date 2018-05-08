@@ -1,6 +1,7 @@
 // Imports the Google Cloud client library
-const BigQuery = require('@google-cloud/bigquery');
-const config = require('config');
+import BigQuery = require('@google-cloud/bigquery');
+import config = require('config');
+import { IGoogleConfig } from '../utils/configs';
 
 export class BigQueryService {
     // Your Google Cloud Platform project ID
@@ -8,19 +9,19 @@ export class BigQueryService {
     private bigquery;
 
     constructor() {
-        this.projectId = config.get('google').bigQuery.projectId;
+        this.projectId = config.get<IGoogleConfig>('google').bigQuery.projectId;
         this.bigquery = new BigQuery({
-            projectId: this.projectId,
+            projectId: this.projectId
         });
     }
 
     public createDateSet(datasetId: string) {
         return this.bigquery
             .createDataset(datasetId)
-            .then(results => {
+            .then((results) => {
                 return Promise.resolve();
             })
-            .catch(err => {
+            .catch((err) => {
                 return Promise.reject(err);
             });
     }
@@ -30,31 +31,26 @@ export class BigQueryService {
 
         if (!options) {
             options = {
-                query: query,
+                query,
                 useLegacySql: false
-            }
+            };
         }
         return dataset.query(options)
-            .then(results => {
-                console.log("Got this in the results");
-                console.log(JSON.stringify(results));
+            .then((results) => {
                 return Promise.resolve(results[0]);
             })
             .catch((err) => {
-                console.log("err!!")
-                console.log(JSON.stringify(err));
-                return Promise.reject("boo");
-            })
-    };
-
+                return Promise.reject(err);
+            });
+    }
 
     public listDatasets() {
         return this.bigquery
             .getDatasets()
-            .then(results => {
+            .then((results) => {
                 const datasets = results[0];
-                let dataSetsArray = [];
-                datasets.forEach(dataset => {
+                const dataSetsArray = [];
+                datasets.forEach((dataset) => {
                     dataSetsArray.push(dataset.id);
                 });
                 return Promise.resolve(dataSetsArray);
@@ -72,8 +68,8 @@ export class BigQueryService {
         }
 
         return table.insert(rows, options)
-            .then(data => Promise.resolve(data[0]))
-            .catch(err => Promise.reject(err));
+            .then((data) => Promise.resolve(data[0]))
+            .catch((err) => Promise.reject(err));
     }
 
     public deleteDataset(datasetId) {
@@ -83,34 +79,34 @@ export class BigQueryService {
 
     public createTable(datasetId: string, tableId: string, schema: string) {
         const options = {
-            schema: schema,
+            schema
         };
         // Create a new table in the dataset
         return this.bigquery
             .dataset(datasetId)
             .createTable(tableId, options)
-            .then(results => {
+            .then((results) => {
                 return Promise.resolve(results[0]);
             })
-            .catch(err => {
+            .catch((err) => {
                 return Promise.reject(err);
             });
     }
 
     public setTableMetaData(datasetId: string, tableId: string, schema: string, name: string, description: string): Promise<any> {
         const metadata = {
-            schema: schema,
-            name: name,
-            description: description
+            description,
+            name,
+            schema
         };
         return this.bigquery
             .dataset(datasetId)
             .table(tableId)
             .setMetadata(metadata)
-            .then(results => {
+            .then((results) => {
                 return Promise.resolve(results[0]);
             })
-            .catch(err => {
+            .catch((err) => {
                 return Promise.reject(err);
             });
     }
@@ -120,7 +116,7 @@ export class BigQueryService {
             .dataset(datasetId)
             .table(tableId)
             .getRows()
-            .then(results => {
+            .then((results) => {
                 const rows = results[0];
                 return Promise.resolve(rows);
             })
@@ -132,16 +128,18 @@ export class BigQueryService {
         return this.bigquery
             .dataset(datasetId)
             .getTables()
-            .then(results => {
+            .then((results) => {
                 const tables = results[0];
-                let tablesArray = [];
-                tables.forEach(table => {
+                const tablesArray = [];
+                tables.forEach((table) => {
                     tablesArray.push(table.id);
                 });
 
                 return Promise.resolve(tablesArray);
             })
-            .catch(err => Promise.reject(err));
+            .catch((err) => {
+                return Promise.reject(err);
+            });
     }
 
     public deleteTable(datasetId: string, tableId: string): Promise<any> {
@@ -153,7 +151,7 @@ export class BigQueryService {
             .then(() => {
                 return Promise.resolve();
             })
-            .catch(err => {
+            .catch((err) => {
                 return Promise.reject(err);
             });
     }

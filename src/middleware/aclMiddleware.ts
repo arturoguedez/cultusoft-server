@@ -1,50 +1,19 @@
 'use strict';
-import * as jwt from "jwt-simple";
-import * as passport from "passport";
-import * as moment from "moment";
-import { Strategy, ExtractJwt } from "passport-jwt";
-import User from '../models/User';
-import { UserInterface } from '../models/UserInterface';
-const config = require('config');
-import * as acl from 'acl';
-
-
-import { BigQueryService } from '../services/bigQueryService';
+import logger from '../utils/logger';
 
 export class AclMiddleware {
     private readonly acl;
 
-    public constructor() {
-        this.acl = new acl(new acl.memoryBackend());
-        this.loadAcl();
-    }
-
-    private loadAcl() {
-        let bigQueryService = new BigQueryService();
-
-        let query =
-            `
-          SELECT *
-          FROM acl
-          `;
-
-
-        bigQueryService.query(config.get('google').bigQuery.dataSet, query)
-            .then((result) => {
-                let allowedList = result;
-                let allow = [];
-                allowedList.forEach((allowed) => {
-                    allow.push({
-                        roles: allowed.role,
-                        allows: [{ resources: allowed.resource, permissions: allowed.permission }]
-                    });
-                })
-
-                this.acl.allow(allow);
-            });
+    public constructor(acl) {
+        this.acl = acl
     }
 
     public setup() {
+        logger.debug("checking resources for guest");
+        this.acl.whatResources('organization_admin').then((x) => {
+            logger.debug(JSON.stringify(x));
+        })
+
         let self = this;
         return function(req, res, next) {
             if (req.context && req.context.user) {
