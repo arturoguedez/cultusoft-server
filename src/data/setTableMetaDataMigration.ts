@@ -4,14 +4,14 @@ import { Migration } from './migration';
 export class SetTableMetaDataMigration extends Migration {
     private tableId: string;
     private schema: string;
-    private name: string;
+    private tableName: string;
     private description: string;
 
     constructor(name: string, content: any) {
         super(name);
         this.tableId = content.tableId;
         this.schema = content.schema;
-        this.name = content.name;
+        this.tableName = content.name;
         this.description = content.description;
     }
 
@@ -19,7 +19,7 @@ export class SetTableMetaDataMigration extends Migration {
         if (!this.tableId || !this.schema) {
             return Promise.reject('Table id or schema not defined');
         }
-        return bigQueryService.setTableMetaData(dataSet, this.tableId, this.schema, this.name, this.description);
+        return bigQueryService.setTableMetaData(dataSet, this.tableId, this.schema, this.tableName, this.description);
     }
 
     public down(bigQueryService: BigQueryService, dataSet: string): Promise<any> {

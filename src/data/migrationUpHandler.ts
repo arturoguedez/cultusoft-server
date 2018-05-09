@@ -1,5 +1,5 @@
 import { BigQueryService } from '../services/bigQueryService';
-import { MigrationInterface } from './migrationInterface';
+import { IMigration } from './migrationInterface';
 
 export class MigrationUpHandler {
     private migrationsTableName: string;
@@ -10,7 +10,7 @@ export class MigrationUpHandler {
         this.bigQueryService = bigQueryService;
     }
 
-    public handleUp(datasetId: string, migration: MigrationInterface) {
+    public handleUp(datasetId: string, migration: IMigration) {
         const migrationName = migration.getName();
         return migration.up(this.bigQueryService, datasetId)
             .then(() => {

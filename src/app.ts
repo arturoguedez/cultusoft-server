@@ -1,12 +1,13 @@
-import * as express from 'express';
-import { OrganizationRoutes } from './routes/organizationRoutes';
-import * as cookieParser from 'cookie-parser';
-import logger from './utils/logger';
 import * as Acl from 'acl';
-const config = require('config');
-import { BigQueryService } from './services/bigQueryService';
+import config = require('config');
+import * as cookieParser from 'cookie-parser';
+import * as express from 'express';
 import { MigrationRunner } from './data/migrationRunner';
+import { OrganizationRoutes } from './routes/organizationRoutes';
+import { BigQueryService } from './services/bigQueryService';
 import { AclLoader } from './utils/aclLoader';
+import { IGoogleConfig, IServerConfig } from './utils/configs';
+import logger from './utils/logger';
 
 export class App {
     public express;
@@ -18,13 +19,13 @@ export class App {
 
     public async setup() {
         await this.runMigrations();
-        let acl = await this.loadAcl();
+        const acl = await this.loadAcl();
         this.mountRoutes(acl);
         return Promise.resolve();
-    };
+    }
 
     public start() {
-        const port = process.env.PORT || config.get('server').port;
+        const port = process.env.PORT || config.get<IServerConfig>('server').port;
 
         this.express.listen(port, (err) => {
             if (err) {
@@ -39,7 +40,7 @@ export class App {
         this.express.use(express.json());
         this.express.use(express.urlencoded({ extended: false }));
         this.express.use(cookieParser());
-        this.express.use(require("morgan")("combined", { "stream": logger.stream }));
+        this.express.use(require('morgan')('combined', { stream: logger.stream }));
     }
     private mountRoutes(acl) {
         const router = express.Router();
@@ -60,8 +61,8 @@ export class App {
     }
 
     private runMigrations() {
-        let bigQueryService = new BigQueryService();
-        return new MigrationRunner(bigQueryService).runMigrations(config.get('google').bigQuery.dataSet)
+        const bigQueryService = new BigQueryService();
+        return new MigrationRunner(bigQueryService).runMigrations(config.get<IGoogleConfig>('google').bigQuery.dataSet);
     }
 
     private loadAcl(): Promise<any> {

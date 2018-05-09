@@ -1,5 +1,5 @@
 import { BigQueryService } from '../services/bigQueryService';
-import { MigrationInterface } from './migrationInterface';
+import { IMigration } from './migrationInterface';
 
 export class MigrationDownHandler {
     private bigQueryService: BigQueryService;
@@ -8,7 +8,7 @@ export class MigrationDownHandler {
         this.bigQueryService = bigQueryService;
     }
 
-    public handleDown(datasetId: string, migration: MigrationInterface) {
+    public handleDown(datasetId: string, migration: IMigration) {
         return migration.down(this.bigQueryService, datasetId)
             .then(() => {
                 return Promise.resolve();

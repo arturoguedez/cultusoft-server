@@ -22,7 +22,7 @@ class Logger {
                 })
             ),
             transports: [
-                new winston.transports.Console({ level: config.get<LoggerConfig>('logger').level })
+                new winston.transports.Console({ level: config.get<ILoggerConfig>('logger').level })
             ]
         });
 

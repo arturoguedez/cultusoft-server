@@ -9,7 +9,7 @@ import { MigrationFactory } from './migrationFactory';
 import { IMigration } from './migrationInterface';
 import { SetTableMetaDataMigration } from './setTableMetaDataMigration';
 
-describe('data/migratioFactory', () => {
+describe('data/migrationFactory', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
@@ -23,7 +23,7 @@ describe('data/migratioFactory', () => {
     describe('create()', () => {
         it('CreateTableMigration', (done) => {
             const stubbedMigrationContent = `{
-              'type': 'createTable'
+              "type": "createTable"
             }`;
             const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
@@ -37,7 +37,7 @@ describe('data/migratioFactory', () => {
 
         it('InsertTableMigration', (done) => {
             const stubbedMigrationContent = `{
-              'type': 'insertTable'
+              "type": "insertTable"
             }`;
             const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
@@ -50,7 +50,7 @@ describe('data/migratioFactory', () => {
 
         it('SetTableMetaDataMigration', (done) => {
             const stubbedMigrationContent = `{
-              'type': 'setTableMetadDataMigration'
+              "type": "setTableMetadDataMigration"
             }`;
             const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
@@ -63,7 +63,7 @@ describe('data/migratioFactory', () => {
 
         it('unknown type', (done) => {
             const stubbedMigrationContent = `{
-              'type': 'a_bad_one'
+              "type": "a_bad_one"
             }`;
             const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);

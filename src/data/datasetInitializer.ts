@@ -10,7 +10,7 @@ export class DatasetInitializer {
     public initDataset(datasetId: string) {
         return this.bigQueryService.listDatasets()
             .then((dataSets) => {
-                let dataSetExists: boolean = dataSets.some((dataSet) => {
+                const dataSetExists: boolean = dataSets.some((dataSet) => {
                     return dataSet === datasetId;
                 });
 

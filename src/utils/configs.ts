@@ -12,3 +12,7 @@ export interface IGoogleConfig {
         dataSet: string
     };
 }
+
+export interface IServerConfig {
+    port: number;
+}

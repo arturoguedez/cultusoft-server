@@ -8,7 +8,7 @@ import MigrationDownHandler from './migrationDownHandler';
 import MigrationFactory from './migrationFactory';
 import MigrationUpHandler from './migrationUpHandler';
 
-describe('data/migrationApplier', function() {
+describe('data/migrationApplier', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
@@ -120,7 +120,7 @@ describe('data/migrationApplier', function() {
                 return Promise.resolve(new Migration(name));
             });
 
-            sandbox.stub(MigrationUpHandler.prototype, 'handleUp').callsFake((datasetId, migration) => {
+            sandbox.stub(MigrationUpHandler.prototype, 'handleUp').callsFake((theDatasetId, migration) => {
                 if (migration.getName() === 'migration_one') {
                     migrationOneApplied += 1;
                 } else if (migration.getName() === 'migration_two') {

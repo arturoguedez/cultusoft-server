@@ -1,8 +1,8 @@
 'use strict';
 import { expect } from 'chai';
-import { Migration } from './migration';
-import { BigQueryService } from '../services/bigQueryService';
 import sinon = require('sinon');
+import { BigQueryService } from '../services/bigQueryService';
+import { Migration } from './migration';
 
 describe('data/migration', () => {
     let sandbox;
@@ -16,19 +16,19 @@ describe('data/migration', () => {
     });
 
     it('up()', (done) => {
-        let stub = sandbox.createStubInstance(BigQueryService);
-        let migration = new Migration('name');
+        const stub = sandbox.createStubInstance(BigQueryService);
+        const migration = new Migration('name');
         migration.up(stub, 'datasetId').then(() => done());
     });
 
     it('down()', (done) => {
-        let stub = sandbox.createStubInstance(BigQueryService);
-        let migration = new Migration('name');
+        const stub = sandbox.createStubInstance(BigQueryService);
+        const migration = new Migration('name');
         migration.down(stub, 'datasetId').then(() => done());
     });
 
     it('getName()', () => {
-        let migration = new Migration('name');
+        const migration = new Migration('name');
         expect(migration.getName()).to.be.equals('name');
     });
 });

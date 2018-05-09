@@ -1,6 +1,5 @@
-import { Migration } from './migration';
 import { BigQueryService } from '../services/bigQueryService';
-const fs = require(`fs`);
+import { Migration } from './migration';
 
 export class CreateTableMigration extends Migration {
     private tableId: string;
@@ -14,15 +13,15 @@ export class CreateTableMigration extends Migration {
 
     public up(bigQueryService: BigQueryService, dataSet: string): Promise<any> {
         if (!this.tableId || !this.schema) {
-            return Promise.reject("Table id or schema not defined")
-        };
+            return Promise.reject('Table id or schema not defined');
+        }
         return bigQueryService.createTable(dataSet, this.tableId, this.schema);
     }
 
     public down(bigQueryService: BigQueryService, dataSet: string): Promise<any> {
         if (!this.tableId || !this.schema) {
-            return Promise.reject("Table id or schema not defined")
-        };
+            return Promise.reject('Table id or schema not defined');
+        }
         return bigQueryService.deleteTable(dataSet, this.tableId);
     }
 }

@@ -1,5 +1,5 @@
-import { Migration } from './migration';
 import { BigQueryService } from '../services/bigQueryService';
+import { Migration } from './migration';
 
 export class InsertTableMigration extends Migration {
     private tableId: string;
@@ -13,8 +13,8 @@ export class InsertTableMigration extends Migration {
 
     public up(bigQueryService: BigQueryService, dataSet: string): Promise<any> {
         if (!this.tableId) {
-            return Promise.reject("Table id is not defined")
-        };
+            return Promise.reject('Table id is not defined');
+        }
         return bigQueryService.insert(dataSet, this.tableId, this.rows, null);
     }
 

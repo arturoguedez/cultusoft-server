@@ -1,11 +1,11 @@
-import { IMigration } from './migrationInterface';
 import { BigQueryService } from '../services/bigQueryService';
+import { IMigration } from './migrationInterface';
 
 export class Migration implements IMigration {
-    private _name: string;
+    private name: string;
 
     constructor(name: string) {
-        this._name = name;
+        this.name = name;
     }
 
     public up(bigQueryService: BigQueryService, dataSet: string) {
@@ -17,6 +17,6 @@ export class Migration implements IMigration {
     }
 
     public getName() {
-        return this._name;
+        return this.name;
     }
 }
