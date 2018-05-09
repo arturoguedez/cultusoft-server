@@ -1,14 +1,13 @@
 'use strict';
 import { expect } from 'chai';
-import { MigrationFactory } from './migrationFactory';
-import { Migration } from './migration';
-import { MigrationInterface } from './migrationInterface';
-import { CreateTableMigration } from './createTableMigration';
-import { InsertTableMigration } from './insertTableMigration';
-import { SetTableMetaDataMigration } from './setTableMetaDataMigration';
-
 import fs = require('fs');
 import sinon = require('sinon');
+import { CreateTableMigration } from './createTableMigration';
+import { InsertTableMigration } from './insertTableMigration';
+import { Migration } from './migration';
+import { MigrationFactory } from './migrationFactory';
+import { IMigration } from './migrationInterface';
+import { SetTableMetaDataMigration } from './setTableMetaDataMigration';
 
 describe('data/migratioFactory', () => {
     let sandbox;
@@ -23,50 +22,50 @@ describe('data/migratioFactory', () => {
 
     describe('create()', () => {
         it('CreateTableMigration', (done) => {
-            let stubbedMigrationContent = `{
-              "type": "createTable"
+            const stubbedMigrationContent = `{
+              'type': 'createTable'
             }`;
-            let fsStub = sandbox.stub(fs, 'readFileSync');
+            const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
             new MigrationFactory().create('foo').then((migration) => {
-                expect(migration instanceof CreateTableMigration).to.be.true;
+                expect(migration instanceof CreateTableMigration).to.equal(true);
                 done();
             });
 
         });
 
         it('InsertTableMigration', (done) => {
-            let stubbedMigrationContent = `{
-              "type": "insertTable"
+            const stubbedMigrationContent = `{
+              'type': 'insertTable'
             }`;
-            let fsStub = sandbox.stub(fs, 'readFileSync');
+            const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
             new MigrationFactory().create('foo').then((migration) => {
-                expect(migration instanceof InsertTableMigration).to.be.true;
+                expect(migration instanceof InsertTableMigration).to.equal(true);
                 done();
             });
         });
 
         it('SetTableMetaDataMigration', (done) => {
-            let stubbedMigrationContent = `{
-              "type": "setTableMetadDataMigration"
+            const stubbedMigrationContent = `{
+              'type': 'setTableMetadDataMigration'
             }`;
-            let fsStub = sandbox.stub(fs, 'readFileSync');
+            const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
             new MigrationFactory().create('foo').then((migration) => {
-                expect(migration instanceof SetTableMetaDataMigration).to.be.true;
+                expect(migration instanceof SetTableMetaDataMigration).to.equal(true);
                 done();
             });
         });
 
         it('unknown type', (done) => {
-            let stubbedMigrationContent = `{
-              "type": "a_bad_one"
+            const stubbedMigrationContent = `{
+              'type': 'a_bad_one'
             }`;
-            let fsStub = sandbox.stub(fs, 'readFileSync');
+            const fsStub = sandbox.stub(fs, 'readFileSync');
             fsStub.onCall(0).returns(stubbedMigrationContent);
 
             new MigrationFactory().create('foo').catch((err) => {

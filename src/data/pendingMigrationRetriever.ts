@@ -12,14 +12,14 @@ export class PendingMigrationRetriever {
     }
 
     public getPendingMigrations(datasetId: string): Promise<string[]> {
-        let registry: string[] = new MigrationRegistry().getRegistry();
+        const registry: string[] = new MigrationRegistry().getRegistry();
         return new Promise<string[]>((resolve, reject) => {
             this.bigQueryService.getRows(datasetId, this.migrationsTableName)
-                .then(rows => {
-                    let pendingMigration = registry.filter((registeredMigration) => {
+                .then((rows) => {
+                    const pendingMigration = registry.filter((registeredMigration) => {
                         return rows.every((row) => {
                             return registeredMigration !== row.Name;
-                        })
+                        });
                     });
                     return resolve(pendingMigration);
                 }).catch((err) => {

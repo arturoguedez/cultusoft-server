@@ -1,10 +1,10 @@
 'use strict';
 import { expect } from 'chai';
-import { SetTableMetaDataMigration } from './setTableMetaDataMigration';
-import { BigQueryService } from '../services/bigQueryService';
 import sinon = require('sinon');
+import { BigQueryService } from '../services/bigQueryService';
+import { SetTableMetaDataMigration } from './setTableMetaDataMigration';
 
-describe('data/setTableMetaDataMigration', function() {
+describe('data/setTableMetaDataMigration', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
@@ -12,7 +12,7 @@ describe('data/setTableMetaDataMigration', function() {
     });
 
     afterEach('restore sandbox', () => {
-        sandbox.restore()
+        sandbox.restore();
     });
 
     describe('up()', () => {
@@ -37,7 +37,7 @@ describe('data/setTableMetaDataMigration', function() {
         it('resolving', (done) => {
             const stub = sandbox.createStubInstance(BigQueryService);
             stub.setTableMetaData.restore();
-            sandbox.stub(stub, "setTableMetaData").callsFake(() => {
+            sandbox.stub(stub, 'setTableMetaData').callsFake(() => {
                 return Promise.resolve();
             });
 
@@ -48,7 +48,7 @@ describe('data/setTableMetaDataMigration', function() {
         it('rejected', (done) => {
             const stub = sandbox.createStubInstance(BigQueryService);
             stub.setTableMetaData.restore();
-            sandbox.stub(stub, "setTableMetaData").callsFake(() => {
+            sandbox.stub(stub, 'setTableMetaData').callsFake(() => {
                 return Promise.reject('error from stub');
             });
 

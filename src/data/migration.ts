@@ -1,7 +1,7 @@
-import { MigrationInterface } from './migrationInterface';
+import { IMigration } from './migrationInterface';
 import { BigQueryService } from '../services/bigQueryService';
 
-export class Migration implements MigrationInterface {
+export class Migration implements IMigration {
     private _name: string;
 
     constructor(name: string) {

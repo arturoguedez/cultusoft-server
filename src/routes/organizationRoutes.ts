@@ -1,8 +1,8 @@
 import * as express from 'express';
-import AclMiddleware from '../middleware/aclMiddleware';
-import User from '../controllers/organization/user';
-import JtwVertification from '../middleware/jwt';
 import { Auth } from '../controllers/organization/auth';
+import User from '../controllers/organization/user';
+import AclMiddleware from '../middleware/aclMiddleware';
+import JtwVertification from '../middleware/jwt';
 import { Passport } from '../middleware/passport';
 
 export class OrganizationRoutes {

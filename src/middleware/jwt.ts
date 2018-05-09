@@ -1,7 +1,7 @@
 'use strict';
 import { Auth } from '../controllers/organization/auth';
+import { Passport } from '../middleware/passport';
 import logger from '../utils/logger';
-import { Passport } from './../middleware/passport';
 
 export class JtwVertification {
     private passport: Passport;
@@ -10,32 +10,33 @@ export class JtwVertification {
         this.passport = passport;
     }
 
-    private authenticate(callback) {
-        return this.passport.authenticate(callback);
-    }
-
     public setup() {
         const self = this;
         return (req, res, next) => {
-            logger.debug("in the jwt middleware");
+            logger.debug('in the jwt middleware');
             self.authenticate((err, user, info) => {
                 if (err) {
                     return next(err);
                 }
                 if (!user) {
-                    if (info.name === "TokenExpiredError") {
-                        return res.status(401).json({ message: "Your token has expired. Please generate a new one" });
+                    if (info.name === 'TokenExpiredError') {
+                        return res.status(401).json({ message: 'Your token has expired. Please generate a new one' });
                     } else {
                         return res.status(401).json({ message: info.message });
                     }
                 }
-                logger.debug("here is the user I got..");
+                logger.debug('here is the user I got..');
                 logger.debug(JSON.stringify(user));
-                req.context = { user: user };
+                req.context = { user };
                 return next();
             })(req, res, next);
-        }
+        };
     }
+
+    private authenticate(callback) {
+        return this.passport.authenticate(callback);
+    }
+
 }
 
 export default JtwVertification;

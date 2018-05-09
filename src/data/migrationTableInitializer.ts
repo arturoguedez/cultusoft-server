@@ -12,7 +12,7 @@ export class MigrationTableInitializer {
     public initMigrationTable(datasetId: string) {
         return this.bigQueryService.listTables(datasetId)
             .then((tableNames) => {
-                let migrationTableExists: boolean = tableNames.some((tableName) => {
+                const migrationTableExists: boolean = tableNames.some((tableName) => {
                     return tableName === this.migrationsTableName;
                 });
 
@@ -21,8 +21,8 @@ export class MigrationTableInitializer {
                 } else {
                     return this.bigQueryService.createTable(datasetId, this.migrationsTableName, 'Name:STRING, AppliedOn:TIMESTAMP');
                 }
-            })
-    };
+            });
+    }
 }
 
 export default MigrationTableInitializer;

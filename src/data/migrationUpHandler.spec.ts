@@ -1,11 +1,11 @@
 'use strict';
 import { expect } from 'chai';
+import sinon = require('sinon');
 import { BigQueryService } from '../services/bigQueryService';
 import { Migration } from './migration';
 import MigrationUpHandler from './migrationUpHandler';
-import sinon = require('sinon');
 
-describe('data/migrationUpHandler', function() {
+describe('data/migrationUpHandler', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
@@ -13,14 +13,14 @@ describe('data/migrationUpHandler', function() {
     });
 
     afterEach('restore sandbox', () => {
-        sandbox.restore()
+        sandbox.restore();
     });
 
     describe('handleUp()', () => {
         it('Successful. Inserting record of migration succeeds.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
-            let datasetId = 'testdataset';
-            let migrationStub = sandbox.createStubInstance(Migration);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const datasetId = 'testdataset';
+            const migrationStub = sandbox.createStubInstance(Migration);
 
             migrationStub.up.restore();
             sandbox.stub(migrationStub, 'up').callsFake(() => {
@@ -39,14 +39,14 @@ describe('data/migrationUpHandler', function() {
 
             new MigrationUpHandler(bigQueryServiceStub, 'migration').handleUp(datasetId, migrationStub)
                 .then(() => {
-                    done()
+                    done();
                 });
         });
 
         it('Successful. Inserting record of migration fails.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
-            let datasetId = 'testdataset';
-            let migrationStub = sandbox.createStubInstance(Migration);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const datasetId = 'testdataset';
+            const migrationStub = sandbox.createStubInstance(Migration);
 
             migrationStub.up.restore();
             sandbox.stub(migrationStub, 'up').callsFake(() => {
@@ -71,9 +71,9 @@ describe('data/migrationUpHandler', function() {
         });
 
         it('fails', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
-            let datasetId = 'testdataset';
-            let migrationStub = sandbox.createStubInstance(Migration);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const datasetId = 'testdataset';
+            const migrationStub = sandbox.createStubInstance(Migration);
 
             migrationStub.up.restore();
             sandbox.stub(migrationStub, 'up').callsFake(() => {

@@ -1,14 +1,14 @@
 'use strict';
 import { expect } from 'chai';
-import { MigrationRunner } from './migrationRunner';
-import { BigQueryService } from '../services/bigQueryService';
-import MigrationApplier from './migrationApplier';
-import PendingMigrationRetriever from './pendingMigrationRetriever';
-import MigrationTableInitializer from './migrationTableInitializer';
-import DatasetInitializer from './datasetInitializer';
 import sinon = require('sinon');
+import { BigQueryService } from '../services/bigQueryService';
+import DatasetInitializer from './datasetInitializer';
+import MigrationApplier from './migrationApplier';
+import { MigrationRunner } from './migrationRunner';
+import MigrationTableInitializer from './migrationTableInitializer';
+import PendingMigrationRetriever from './pendingMigrationRetriever';
 
-describe('data/migrationRunner', function() {
+describe('data/migrationRunner', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
@@ -16,18 +16,18 @@ describe('data/migrationRunner', function() {
     });
 
     afterEach('restore sandbox', () => {
-        sandbox.restore()
+        sandbox.restore();
     });
 
     describe('runMigrations()', () => {
         it('Unable to initialize DataSet.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(DatasetInitializer.prototype, 'initDataset').callsFake(() => {
                 return Promise.reject('Unable to initialize dataset');
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationRunner(bigQueryServiceStub).runMigrations(datasetId).catch((err) => {
                 expect(err).to.be.equal('Unable to initialize dataset');
                 done();
@@ -35,7 +35,7 @@ describe('data/migrationRunner', function() {
         });
 
         it('Unable to initialize Migrations Table', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(DatasetInitializer.prototype, 'initDataset').callsFake(() => {
                 return Promise.resolve();
@@ -45,7 +45,7 @@ describe('data/migrationRunner', function() {
                 return Promise.reject('Unable to initialize migration table');
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationRunner(bigQueryServiceStub).runMigrations(datasetId).catch((err) => {
                 expect(err).to.be.equal('Unable to initialize migration table');
                 done();
@@ -53,7 +53,7 @@ describe('data/migrationRunner', function() {
         });
 
         it('No Pending Migrations Found.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
             sandbox.stub(DatasetInitializer.prototype, 'initDataset').callsFake(() => {
                 return Promise.resolve();
             });
@@ -66,7 +66,7 @@ describe('data/migrationRunner', function() {
                 return Promise.resolve([]);
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationRunner(bigQueryServiceStub).runMigrations(datasetId)
                 .then(() => {
                     done();
@@ -74,7 +74,7 @@ describe('data/migrationRunner', function() {
         });
 
         it('Unable to get Pending Migrations.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(DatasetInitializer.prototype, 'initDataset').callsFake(() => {
                 return Promise.resolve();
@@ -88,7 +88,7 @@ describe('data/migrationRunner', function() {
                 return Promise.reject('unable to get pending migrations');
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationRunner(bigQueryServiceStub).runMigrations(datasetId)
                 .catch((err) => {
                     expect(err).to.be.equal('unable to get pending migrations');
@@ -97,7 +97,7 @@ describe('data/migrationRunner', function() {
         });
 
         it('Applying Migration succeeds', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(DatasetInitializer.prototype, 'initDataset').callsFake(() => {
                 return Promise.resolve();
@@ -115,7 +115,7 @@ describe('data/migrationRunner', function() {
                 return Promise.resolve();
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationRunner(bigQueryServiceStub).runMigrations(datasetId)
                 .then(() => {
                     done();
@@ -123,7 +123,7 @@ describe('data/migrationRunner', function() {
         });
 
         it('Applying Migration fails', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(DatasetInitializer.prototype, 'initDataset').callsFake(() => {
                 return Promise.resolve();
@@ -141,7 +141,7 @@ describe('data/migrationRunner', function() {
                 return Promise.reject('unable to apply migrations');
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationRunner(bigQueryServiceStub).runMigrations(datasetId)
                 .catch((err) => {
                     expect(err).to.be.equal('unable to apply migrations');

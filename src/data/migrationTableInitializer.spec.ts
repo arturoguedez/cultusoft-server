@@ -1,10 +1,10 @@
 'use strict';
 import { expect } from 'chai';
+import sinon = require('sinon');
 import { BigQueryService } from '../services/bigQueryService';
 import MigrationTableInitializer from './migrationTableInitializer';
-import sinon = require('sinon');
 
-describe('data/migrationTableInitializer', function() {
+describe('data/migrationTableInitializer', () => {
     let sandbox;
 
     beforeEach('prepare sandbox', () => {
@@ -12,18 +12,18 @@ describe('data/migrationTableInitializer', function() {
     });
 
     afterEach('restore sandbox', () => {
-        sandbox.restore()
+        sandbox.restore();
     });
 
     describe('initMigrationTable()', () => {
         it('Unable to list tables.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
             bigQueryServiceStub.listTables.restore();
             sandbox.stub(bigQueryServiceStub, 'listTables').callsFake(() => {
                 return Promise.reject('Unable to list tables');
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationTableInitializer(bigQueryServiceStub, 'migration').initMigrationTable(datasetId)
                 .catch((err) => {
                     expect(err).to.be.equal('Unable to list tables');
@@ -32,13 +32,13 @@ describe('data/migrationTableInitializer', function() {
         });
 
         it('Migration Table exists.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             bigQueryServiceStub.listTables.restore();
             sandbox.stub(bigQueryServiceStub, 'listTables').callsFake(() => {
                 return Promise.resolve(['migration']);
             });
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationTableInitializer(bigQueryServiceStub, 'migration').initMigrationTable(datasetId)
                 .then(() => {
                     done();
@@ -46,7 +46,7 @@ describe('data/migrationTableInitializer', function() {
         });
 
         it('Migration Table does not exists. Unable to create.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             bigQueryServiceStub.listTables.restore();
             sandbox.stub(bigQueryServiceStub, 'listTables').callsFake(() => {
@@ -58,7 +58,7 @@ describe('data/migrationTableInitializer', function() {
                 return Promise.reject('Unable to create table');
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationTableInitializer(bigQueryServiceStub, 'migration').initMigrationTable(datasetId)
                 .catch((err) => {
                     expect(err).to.be.equal('Unable to create table');
@@ -67,7 +67,7 @@ describe('data/migrationTableInitializer', function() {
         });
 
         it('Migration Table does not exists. Creation succeeds.', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             bigQueryServiceStub.listTables.restore();
             sandbox.stub(bigQueryServiceStub, 'listTables').callsFake(() => {
@@ -79,7 +79,7 @@ describe('data/migrationTableInitializer', function() {
                 return Promise.resolve();
             });
 
-            let datasetId = 'testdataset';
+            const datasetId = 'testdataset';
             new MigrationTableInitializer(bigQueryServiceStub, 'migration').initMigrationTable(datasetId)
                 .then(() => {
                     done();

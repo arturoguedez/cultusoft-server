@@ -11,13 +11,13 @@ export class MigrationUpHandler {
     }
 
     public handleUp(datasetId: string, migration: MigrationInterface) {
-        let migrationName = migration.getName();
+        const migrationName = migration.getName();
         return migration.up(this.bigQueryService, datasetId)
             .then(() => {
                 const toInsert = {
-                    Name: migrationName,
-                    AppliedOn: new Date()
-                }
+                    AppliedOn: new Date(),
+                    Name: migrationName
+                };
 
                 return this.bigQueryService.insert(datasetId, this.migrationsTableName, toInsert, null)
                     .then(() => {
@@ -30,7 +30,6 @@ export class MigrationUpHandler {
             .catch((err) => {
                 return Promise.reject(err);
             });
-
     }
 }
 export default MigrationUpHandler;

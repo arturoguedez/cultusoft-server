@@ -8,6 +8,7 @@ export interface IJWTConfig {
 
 export interface IGoogleConfig {
     bigQuery: {
-        projectId: string
+        projectId: string,
+        dataSet: string
     };
 }

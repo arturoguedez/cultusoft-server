@@ -20,8 +20,8 @@ export class User {
 
 export interface IUser {
     username: string;
-    comparePassword(password: string): Promise<boolean>;
     roles: string[];
+    comparePassword(password: string): Promise<boolean>;
 }
 
 export default new User();

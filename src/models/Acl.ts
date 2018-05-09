@@ -1,6 +1,7 @@
+import config = require('config');
 import { BigQueryService } from '../services/bigQueryService';
+import { IGoogleConfig } from '../utils/configs';
 import logger from '../utils/logger';
-const config = require('config');
 
 export class Acl {
     private bigQueryService: BigQueryService;
@@ -10,18 +11,18 @@ export class Acl {
     }
 
     public findAll(): Promise<any> {
-        let query = `SELECT * FROM acl`;
+        const query = `SELECT * FROM acl`;
 
-        return this.bigQueryService.query(config.get('google').bigQuery.dataSet, query)
+        return this.bigQueryService.query(config.get<IGoogleConfig>('google').bigQuery.dataSet, query)
             .then((result) => {
-                let allowedList = result;
-                let allow = [];
+                const allowedList = result;
+                const allow = [];
                 allowedList.forEach((allowed) => {
                     allow.push({
-                        roles: allowed.role,
-                        allows: [{ resources: allowed.resource, permissions: allowed.permission }]
+                        allows: [{ resources: allowed.resource, permissions: allowed.permission }],
+                        roles: allowed.role
                     });
-                })
+                });
                 return Promise.resolve(allow);
             }
             );

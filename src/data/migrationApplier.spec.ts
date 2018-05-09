@@ -1,12 +1,12 @@
 'use strict';
 import { expect } from 'chai';
+import sinon = require('sinon');
 import { BigQueryService } from '../services/bigQueryService';
-import MigrationApplier from './migrationApplier';
 import { Migration } from './migration';
-import MigrationUpHandler from './migrationUpHandler';
+import MigrationApplier from './migrationApplier';
 import MigrationDownHandler from './migrationDownHandler';
 import MigrationFactory from './migrationFactory';
-import sinon = require('sinon');
+import MigrationUpHandler from './migrationUpHandler';
 
 describe('data/migrationApplier', function() {
     let sandbox;
@@ -16,38 +16,38 @@ describe('data/migrationApplier', function() {
     });
 
     afterEach('restore sandbox', () => {
-        sandbox.restore()
+        sandbox.restore();
     });
 
     describe('applyMigrations()', () => {
         it('No pending migrations left to apply', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
-            let datasetId = 'testdataset';
-            let pendingMigrations = [];
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const datasetId = 'testdataset';
+            const pendingMigrations = [];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .then(() => {
-                    done()
+                    done();
                 });
         });
 
         it('Failing to create migration from Factory', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(MigrationFactory.prototype, 'create').callsFake(() => {
                 return Promise.reject('Unknown migration type');
             });
 
-            let datasetId = 'testdataset';
-            let pendingMigrations = ['migration_one'];
+            const datasetId = 'testdataset';
+            const pendingMigrations = ['migration_one'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .catch((err) => {
                     expect(err).to.be.equals('Unknown migration type');
-                    done()
+                    done();
                 });
         });
 
         it('Up failed, Down succeeded', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
             sandbox.stub(MigrationFactory.prototype, 'create').callsFake(() => {
                 return Promise.resolve(new Migration('migration_name'));
             });
@@ -60,17 +60,17 @@ describe('data/migrationApplier', function() {
                 return Promise.resolve();
             });
 
-            let datasetId = 'testdataset';
-            let pendingMigrations = ['migration_one'];
+            const datasetId = 'testdataset';
+            const pendingMigrations = ['migration_one'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .catch((err) => {
                     expect(err).to.be.equals('Migration migration_name has been rolled back. Error from up(): Unknown migration type');
-                    done()
+                    done();
                 });
         });
 
         it('Up failed, Down failed', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(MigrationFactory.prototype, 'create').callsFake(() => {
                 return Promise.resolve(new Migration('migration_name'));
@@ -84,17 +84,17 @@ describe('data/migrationApplier', function() {
                 return Promise.reject('Down failed');
             });
 
-            let datasetId = 'testdataset';
-            let pendingMigrations = ['migration_one'];
+            const datasetId = 'testdataset';
+            const pendingMigrations = ['migration_one'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .catch((err) => {
                     expect(err).to.be.equals('Down failed');
-                    done()
+                    done();
                 });
         });
 
         it('Up succeded', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
 
             sandbox.stub(MigrationFactory.prototype, 'create').callsFake(() => {
                 return Promise.resolve(new Migration('migration_name'));
@@ -104,16 +104,16 @@ describe('data/migrationApplier', function() {
                 return Promise.resolve();
             });
 
-            let datasetId = 'testdataset';
-            let pendingMigrations = ['migration_one'];
+            const datasetId = 'testdataset';
+            const pendingMigrations = ['migration_one'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .then(() => {
-                    done()
+                    done();
                 });
         });
 
         it('Up succeded many times', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
             let migrationOneApplied = 0;
             let migrationTwoApplied = 0;
             sandbox.stub(MigrationFactory.prototype, 'create').callsFake((name) => {
@@ -129,19 +129,18 @@ describe('data/migrationApplier', function() {
                 return Promise.resolve();
             });
 
-            let datasetId = 'testdataset';
-            let pendingMigrations = ['migration_one', 'migration_two'];
+            const datasetId = 'testdataset';
+            const pendingMigrations = ['migration_one', 'migration_two'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .then(() => {
                     expect(migrationOneApplied).to.be.equals(1);
                     expect(migrationTwoApplied).to.be.equals(1);
-                    done()
+                    done();
                 });
         });
 
-
         it('Up succeded many times, fails half way through', (done) => {
-            let bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
+            const bigQueryServiceStub = sandbox.createStubInstance(BigQueryService);
             let migrationOneApplied = 0;
             let migrationTwoApplied = 0;
             let migrationThreeApplied = 0;
@@ -154,20 +153,20 @@ describe('data/migrationApplier', function() {
                 return Promise.resolve(new Migration(name));
             });
 
-            sandbox.stub(MigrationUpHandler.prototype, 'handleUp').callsFake((datasetId, migration) => {
+            sandbox.stub(MigrationUpHandler.prototype, 'handleUp').callsFake((theDatasetId, migration) => {
                 if (migration.getName() === 'migration_one') {
                     migrationOneApplied += 1;
                 } else if (migration.getName() === 'migration_two') {
                     migrationTwoApplied += 1;
                     return Promise.reject('failed to complete');
                 } else if (migration.getName() === 'migration_three') {
-                    migrationTwoApplied += 1;
+                    migrationThreeApplied += 1;
                 }
                 return Promise.resolve();
             });
 
-            let downStub = sandbox.stub(MigrationDownHandler.prototype, 'handleDown');
-            downStub.callsFake((datasetId, migration) => {
+            const downStub = sandbox.stub(MigrationDownHandler.prototype, 'handleDown');
+            downStub.callsFake((theDatasetId, migration) => {
                 if (migration.getName() === 'migration_one') {
                     migrationOneReverted += 1;
                 } else if (migration.getName() === 'migration_two') {
@@ -178,8 +177,8 @@ describe('data/migrationApplier', function() {
                 return Promise.resolve();
             });
 
-            let datasetId = 'testdataset';
-            let pendingMigrations = ['migration_one', 'migration_two', 'migration_three'];
+            const datasetId = 'testdataset';
+            const pendingMigrations = ['migration_one', 'migration_two', 'migration_three'];
             new MigrationApplier(bigQueryServiceStub, 'migration').applyMigrations(datasetId, pendingMigrations)
                 .catch((err) => {
                     expect(migrationOneApplied).to.be.equals(1);
