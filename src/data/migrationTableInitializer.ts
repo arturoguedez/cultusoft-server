@@ -19,7 +19,20 @@ export class MigrationTableInitializer {
                 if (migrationTableExists) {
                     return Promise.resolve();
                 } else {
-                    return this.bigQueryService.createTable(datasetId, this.migrationsTableName, 'Name:STRING, AppliedOn:TIMESTAMP');
+                    const schema =
+                        [
+                            {
+                                mode: 'REQUIRED',
+                                name: 'name',
+                                type: 'STRING'
+                            },
+                            {
+                                mode: 'REQUIRED',
+                                name: 'created_at',
+                                type: 'TIMESTAMP'
+                            }
+                        ];
+                    return this.bigQueryService.createTable(datasetId, this.migrationsTableName, schema);
                 }
             });
     }

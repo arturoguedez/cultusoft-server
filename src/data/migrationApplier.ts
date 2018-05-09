@@ -1,4 +1,5 @@
 import { BigQueryService } from '../services/bigQueryService';
+import logger from '../utils/logger';
 import { MigrationDownHandler } from './migrationDownHandler';
 import { MigrationFactory } from './migrationFactory';
 import { MigrationUpHandler } from './migrationUpHandler';
@@ -23,11 +24,13 @@ export class MigrationApplier {
 
         return this.migrationFactory.create(migrationName)
             .then((migration) => {
+                logger.debug(`About to handle up() for migration ${migrationName}`);
                 return this.migrationUpHandler.handleUp(datasetId, migration)
                     .then(() => {
                         return Promise.resolve();
                     })
                     .catch((err) => {
+                        logger.debug(`About to handle down() for migration ${migrationName}`);
                         return this.migrationDownHandler.handleDown(datasetId, migration)
                             .then(() => {
                                 return Promise.reject(`Migration ${migration.getName()} has been rolled back. Error from up(): ${err}`);

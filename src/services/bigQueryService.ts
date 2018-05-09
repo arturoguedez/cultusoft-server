@@ -2,6 +2,7 @@
 import BigQuery = require('@google-cloud/bigquery');
 import config = require('config');
 import { IGoogleConfig } from '../utils/configs';
+import logger from '../utils/logger';
 
 export class BigQueryService {
     // Your Google Cloud Platform project ID
@@ -68,7 +69,10 @@ export class BigQueryService {
         }
 
         return table.insert(rows, options)
-            .then((data) => Promise.resolve(data[0]))
+            .then((data) => {
+                logger.debug(`Inserted Data to table ${tableId} \n ${JSON.stringify(rows)}`);
+                return Promise.resolve(data[0]);
+            })
             .catch((err) => Promise.reject(err));
     }
 
@@ -77,7 +81,7 @@ export class BigQueryService {
         return dataset.delete();
     }
 
-    public createTable(datasetId: string, tableId: string, schema: string) {
+    public createTable(datasetId: string, tableId: string, schema: any) {
         const options = {
             schema
         };
@@ -86,6 +90,7 @@ export class BigQueryService {
             .dataset(datasetId)
             .createTable(tableId, options)
             .then((results) => {
+                logger.debug(`Created Created: ${tableId} with result ${JSON.stringify(results)}`);
                 return Promise.resolve(results[0]);
             })
             .catch((err) => {

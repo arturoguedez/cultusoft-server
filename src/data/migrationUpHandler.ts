@@ -15,8 +15,8 @@ export class MigrationUpHandler {
         return migration.up(this.bigQueryService, datasetId)
             .then(() => {
                 const toInsert = {
-                    AppliedOn: new Date(),
-                    Name: migrationName
+                    created_at: new Date(),
+                    name: migrationName
                 };
 
                 return this.bigQueryService.insert(datasetId, this.migrationsTableName, toInsert, null)
