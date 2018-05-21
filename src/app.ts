@@ -2,12 +2,14 @@ import * as Acl from 'acl';
 import config = require('config');
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
-import { MigrationRunner } from './data/migrationRunner';
 import { ApiRoutes } from './routes/apiRoutes';
-import { BigQueryService } from './services/bigQueryService';
 import { AclLoader } from './utils/aclLoader';
 import { IGoogleConfig, IServerConfig } from './utils/configs';
 import logger from './utils/logger';
+// Needed for Type ORM
+import "reflect-metadata";
+import { createConnection } from "typeorm";
+
 
 export class App {
   public express;
@@ -19,11 +21,21 @@ export class App {
 
   public async setup() {
     // await this.runMigrations();
+    await this.openDbConnection();
     const acl = await this.loadAcl();
     this.mountRoutes(acl);
     return Promise.resolve();
   }
 
+  private openDbConnection() {
+    return createConnection().then(connection => {
+      // here you can start to work with your entities
+      console.log("I made it here");
+      console.log("what is the connection");
+      // console.log(connection);
+      return Promise.resolve();
+    }).catch(error => console.log(error));
+  }
   public start() {
     const port = process.env.PORT || config.get<IServerConfig>('server').port;
 
@@ -69,10 +81,10 @@ export class App {
     // https://medium.com/front-end-hacking/learn-using-jwt-with-passport-authentication-9761539c4314
   }
 
-  private runMigrations() {
-    const bigQueryService = new BigQueryService();
-    return new MigrationRunner(bigQueryService).runMigrations(config.get<IGoogleConfig>('google').bigQuery.dataSet);
-  }
+  // private runMigrations() {
+  //   const bigQueryService = new BigQueryService();
+  //   return new MigrationRunner(bigQueryService).runMigrations(config.get<IGoogleConfig>('google').bigQuery.dataSet);
+  // }
 
   private loadAcl(): Promise<any> {
     return new AclLoader().loadAcl();

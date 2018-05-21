@@ -1,7 +1,20 @@
 {
-  "type": "setTableMetadDataMigration",
-  "tableId": "test3",
-  "schema": "Name:STRING, Name2:STRING,servings:integer, cookingTime:float, quick:boolean",
-  "name": "This is my name yo",
-  "description": "A table for storing my recipes."
+  "type": "createTable",
+  "tableId": "acl",
+  "schema": [{
+      "mode": "REQUIRED",
+      "name": "role",
+      "type": "STRING"
+    },
+    {
+      "mode": "REQUIRED",
+      "name": "resource",
+      "type": "STRING"
+    },
+    {
+      "mode": "REQUIRED",
+      "name": "permission",
+      "type": "STRING"
+    }
+  ]
 }

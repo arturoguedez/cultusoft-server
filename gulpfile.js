@@ -127,21 +127,23 @@ gulp.task('build', () => {
 
 gulp.task('scripts', gulp.series('clean-scripts', 'copy-files', 'build'), () => {});
 
-gulp.task('watch', gulp.series('scripts'), () => {
-  return gulp.watch(['src/**/*.ts', '!src/**/*.spec.js'], ['scripts']);
+gulp.task('watch', () => {
+  return gulp.watch(['src/**/*.ts', '!src/**/*.spec.js'], gulp.series('scripts'));
 });
 
-gulp.task('dev', gulp.series('scripts', 'watch'), () => {
-  process.env.NODE_ENV = 'development';
+gulp.task('do-nodemon', () => {
+  // process.env.NODE_ENV = 'development';
   return nodemon({
     script: 'dist/index.js',
-    watch: ['dist/controllers/**/*.js', 'dist/routes/**/*.js', 'dist/services/**/*.js', 'dist/models/**/*.js', 'dist/middleware/**/*.js'],
+    watch: ['dist/index.js'],
     ignore: ['dist/**/*.spec.js', 'dist/**/*.d.ts'],
     env: {
       'NODE_ENV': 'development'
     }
   });
-})
+});
+
+gulp.task('dev', gulp.series('scripts', gulp.parallel('watch', 'do-nodemon')), () => {});
 
 gulp.task('default', gulp.series(gulp.parallel('lint', 'scripts'), 'test'), () => {
   // This will only run if the lint task is successful...
