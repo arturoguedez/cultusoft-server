@@ -9,6 +9,7 @@ import logger from './utils/logger';
 // Needed for Type ORM
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import * as i18n from 'i18n';
 
 
 export class App {
@@ -49,12 +50,21 @@ export class App {
   }
 
   private setupMiddlewares() {
+    i18n.configure({
+      locales: ['en', 'fr'],
+      directory: __dirname + '/locales',
+      objectNotation: true
+    });
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: false }));
     this.express.use(cookieParser());
     this.express.use(require('morgan')('combined', { stream: logger.stream }));
 
+    this.express.use(i18n.init);
+
+
     this.express.use(function(req, res, next) {
+
       res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
       // res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
