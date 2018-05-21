@@ -5,7 +5,7 @@
   "username": "user",
   "password": "password",
   "database": "development",
-  "synchronize": true,
+  "synchronize": false,
   "logging": true,
   "entities": [
     "dist/entity/*.js"

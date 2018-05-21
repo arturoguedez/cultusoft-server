@@ -1,9 +1,9 @@
 import { Company } from '../../entity/company';
 import { CompanyUser } from '../../entity/companyUser';
-import JwtUtils from '../../utils/jwt';
 import { Role } from '../../entity/role';
+import JwtUtils from '../../utils/jwt';
 
-import { getManager, In, EntityManager } from "typeorm";
+import { getManager, EntityManager, In } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import * as i18n from 'i18n';
 
@@ -63,9 +63,6 @@ export class Signup {
     let hashedPassword = await bcrypt.hash(password, 10);
     companyUser.password = hashedPassword;
 
-    let roles = await this.findRolesForNewCompanyUser(manager);
-    companyUser.roles = roles;
-
     await manager.save(companyUser);
 
     let toReturn: any = {};
@@ -76,15 +73,6 @@ export class Signup {
     return Promise.resolve(toReturn);
   }
 
-  private async findRolesForNewCompanyUser(manager: EntityManager) {
-    let roles = await manager.find(Role, {
-      where: {
-        name: In(['company_user', 'company_manager'])
-      }
-    });
-
-    return roles;
-  }
 
   public create = async (req, res) => {
     try {
