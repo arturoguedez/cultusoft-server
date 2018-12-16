@@ -5,7 +5,6 @@ import { IJWTConfig } from './configs';
 
 export class JwtUtils {
 
-
   public genToken = (toEncode: any): any => {
     const expires = moment().utc().add({ days: 7 }).unix();
 
@@ -18,5 +17,3 @@ export class JwtUtils {
     };
   }
 }
-
-export default new JwtUtils();

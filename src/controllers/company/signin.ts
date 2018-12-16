@@ -1,91 +1,72 @@
-import { Company } from '../../entity/company';
-import { CompanyUser } from '../../entity/companyUser';
-import { Role } from '../../entity/role';
-import JwtUtils from '../../utils/jwt';
+import { Company, CompanyUser, Role } from '../../entity';
+import { JwtUtils } from '../../utils';
 
 import { getManager, EntityManager, In } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import * as i18n from 'i18n';
 
-export class Signup {
-
-  private async validateRequest(body) {
-    if (!body.companyName) {
-      return Promise.reject({ phrase: 'signup.company_named_required' });
-    }
-
-    if (!body.email) {
-      return Promise.reject({ phrase: 'signup.email_required' });
-    }
-
-    if (!body.password) {
-      return Promise.reject({ phrase: 'signup.password_required' });
-    }
-
-    return Promise.resolve();
-  }
-
-  // https://coderwall.com/p/1pn7cg/correct-way-to-store-passwords-in-node-js
-  private async createCompany(body) {
-    const { companyName, email, password } = body;
-
-    let manager = await getManager();
-
-    let company = await manager.findOne(Company, {
-      where: {
-        name: companyName
-      }
-    });
-
-    if (company) {
-      return Promise.reject({ phrase: 'signup.company_exists' });
-    }
-
-    let companyUser = await manager.findOne(CompanyUser, {
+export class Signin {
+  private async findCompanyUser(manager: EntityManager, email: string) {
+    return manager.findOne(CompanyUser, {
       where: {
         email: email
-      }
-    });
-
-    if (companyUser) {
-      return Promise.reject({ phrase: 'signup.user_exists', replace: { email: email } });
-    }
-
-    company = new Company();
-    company.name = companyName;
-
-    await manager.save(company);
-
-    companyUser = new CompanyUser();
-    companyUser.email = email;
-    companyUser.company = company;
-
-    let hashedPassword = await bcrypt.hash(password, 10);
-    companyUser.password = hashedPassword;
-
-    await manager.save(companyUser);
-
-    let toReturn: any = {};
-    toReturn = companyUser;
-    let jwtData = JwtUtils.genToken({ username: email, userId: companyUser.id, roles: ['company_user'] });
-    toReturn.jwt = jwtData;
-    delete toReturn.password;
-    return Promise.resolve(toReturn);
+      },
+      relations: ['roles']
+    });;
   }
 
+  private async authenticate(body) {
+    const { email, password } = body;
 
-  public create = async (req, res) => {
+    let manager: EntityManager = await getManager();
+    let companyUser = await this.findCompanyUser(manager, email);
+
+    if (!companyUser) {
+      return Promise.reject({ phrase: 'signin.user_not_found', replace: { email: email } });
+    }
+
+    let passwordMatch = await bcrypt.compare(password, companyUser.password);
+    if (!passwordMatch) {
+      return Promise.reject({ phrase: 'signin.password_mismatch' });
+    }
+
+    let roleNames = companyUser.roles.map((role) => role.name);
+    let toReturn: any = {};
+    toReturn = companyUser;
+    let jwtData = new JwtUtils().genToken({ email: email, companyUserId: companyUser.id, roles: roleNames });
+    toReturn.jwt = jwtData;
+    delete toReturn.password;
+    delete toReturn.roles;
+    return Promise.resolve(toReturn);
+  }
+  // // TODO:
+  /*
+  was thinking of a more generic response, like
+    public signing = async (req, res) => {
+      new Validator().validate(req, res)
+      generateResponse(this.authenticate(req.body));
+  
+      
+  
+  }
+  
+  */
+  public signin = async (req, res) => {
+    console.log("updated2");
     try {
-      await this.validateRequest(req.body);
-      let data = await this.createCompany(req.body);
+      let data = await this.authenticate(req.body);
       return res.status(200).json({ responseCode: 200, data: data });
     } catch (err) {
       if (err && err.phrase) {
         return res.status(200).json({ responseCode: 500, errorMessage: i18n.__({ phrase: err.phrase, locale: i18n.getLocale(req) }, err.replace ? err.replace : {}) });
       }
+      if (err && err.message) {
+        return res.status(200).json({ responseCode: 500, errorMessage: err.message });
+      }
       return res.status(200).json({ responseCode: 500, errorMessage: err });
+
     }
   }
 }
 
-export default Signup;
+export default Signin;

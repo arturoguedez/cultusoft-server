@@ -5,5 +5,14 @@
     "email_required": "Email is required",
     "password_required": "Password is required",
     "user_exists": "There is already an account with email {{email}}"
+  },
+  "signin": {
+    "email_required": "Email is required",
+    "invalid_email_format": "Invalid email",
+    "invalid_email_length": "Invalid email length. Max allowed is {{maxLength}}",
+    "invalid_password_length": "Invalid password length. Max allowed is {{maxLength}}",
+    "password_required": "Password is required",
+    "password_mismatch": "Invalid Password",
+    "user_not_found": "No user matching email {{email}}"
   }
 }

@@ -1,14 +1,12 @@
-import { Company } from '../../entity/company';
-import { CompanyUser } from '../../entity/companyUser';
-import JwtUtils from '../../utils/jwt';
-import { Role } from '../../entity/role';
+import { Company, CompanyUser } from '../../entity';
+import { JwtUtils } from '../../utils';
+import { Role } from '../../entity';
 
 import { getManager, In, EntityManager } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import * as i18n from 'i18n';
 
 export class Signup {
-
   private async validateRequest(body) {
     if (!body.companyName) {
       return Promise.reject({ phrase: 'signup.company_named_required' });
@@ -25,27 +23,35 @@ export class Signup {
     return Promise.resolve();
   }
 
-  // https://coderwall.com/p/1pn7cg/correct-way-to-store-passwords-in-node-js
-  private async createCompany(body) {
-    const { companyName, email, password } = body;
-
-    let manager = await getManager();
-
-    let company = await manager.findOne(Company, {
+  private async findCompany(manager: EntityManager, companyName: string) {
+    return manager.findOne(Company, {
       where: {
         name: companyName
       }
     });
+  }
+
+  private async findCompanyUser(manager: EntityManager, email: string) {
+    return manager.findOne(CompanyUser, {
+      where: {
+        email: email
+      }
+    });;
+  }
+  private async createCompany(body) {
+    const { companyName, email, password } = body;
+
+    let manager = await getManager();
+    let companyPromise = this.findCompany(manager, companyName);
+    let companyUserPromise = this.findCompanyUser(manager, email);
+    let rolesPomise = this.findRolesForNewCompanyUser(manager);
+    let hashedPasswordPromise = bcrypt.hash(password, 10);
+
+    let [company, companyUser, roles, hashedPassword] = await Promise.all([companyPromise, companyUserPromise, rolesPomise, hashedPasswordPromise]);
 
     if (company) {
       return Promise.reject({ phrase: 'signup.company_exists' });
     }
-
-    let companyUser = await manager.findOne(CompanyUser, {
-      where: {
-        email: email
-      }
-    });
 
     if (companyUser) {
       return Promise.reject({ phrase: 'signup.user_exists', replace: { email: email } });
@@ -59,20 +65,19 @@ export class Signup {
     companyUser = new CompanyUser();
     companyUser.email = email;
     companyUser.company = company;
-
-    let hashedPassword = await bcrypt.hash(password, 10);
     companyUser.password = hashedPassword;
-
-    let roles = await this.findRolesForNewCompanyUser(manager);
     companyUser.roles = roles;
+
+    let roleNames = roles.map((role) => role.name);
 
     await manager.save(companyUser);
 
     let toReturn: any = {};
     toReturn = companyUser;
-    let jwtData = JwtUtils.genToken({ username: email, userId: companyUser.id, roles: ['company_user'] });
+    let jwtData = new JwtUtils().genToken({ email: email, companyUserId: companyUser.id, roles: roleNames });
     toReturn.jwt = jwtData;
     delete toReturn.password;
+    delete toReturn.roles;
     return Promise.resolve(toReturn);
   }
 
