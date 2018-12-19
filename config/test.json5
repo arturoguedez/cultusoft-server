@@ -2,12 +2,7 @@
   server: {
     port: 3000
   },
-  google: {
-    bigQuery: {
-      projectId: 'fake-project-id'
-    }
-  },
   logger: {
-      level: 'info'
+    level: 'emerg'
   }
 }

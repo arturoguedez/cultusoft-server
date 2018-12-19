@@ -1,22 +1,13 @@
-import app from './app';
-const config = require('config');
-import logger from './utils/logger';
+import { App } from './app';
 
-import { MigrationRunner } from './data/migrationRunner';
-import { BigQueryService } from './services/bigQueryService';
+const app = new App();
+app.setup()
+  .then(() => {
+    app.start();
+  });
 
-const port = process.env.PORT || config.get('server').port;
-
-new MigrationRunner(new BigQueryService()).runMigrations(config.get('google').bigQuery.dataSet).then(() => {
-    logger.info("migrations applied");
-}).catch((err) => {
-    logger.error(err);
-});
-//
-// app.listen(port, (err) => {
-//   if (err) {
-//     return console.log(err);
-//   }
-//
-//   return console.log(`server is listening on ${port}`);
-// });
+/**
+TODO:
+* Migrations fail when running them twice in a row, when the first one ran as a
+clean run. It looks like the first migration does not get recorded into the history
+*/

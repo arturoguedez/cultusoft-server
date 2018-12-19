@@ -1,20 +1,20 @@
 {
   "type": "createTable",
-  "tableId": "acl",
+  "tableId": "company",
   "schema": [{
       "mode": "REQUIRED",
-      "name": "role",
+      "name": "uuid",
       "type": "STRING"
     },
     {
       "mode": "REQUIRED",
-      "name": "resource",
+      "name": "name",
       "type": "STRING"
     },
     {
       "mode": "REQUIRED",
-      "name": "permission",
-      "type": "STRING"
+      "name": "created_at",
+      "type": "TIMESTAMP"
     }
   ]
 }
