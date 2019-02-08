@@ -28,7 +28,7 @@
     "winston": "^3.0.0-rc5"
   },
   "devDependencies": {
-    "@types/acl": "^0.4.34",
+    "@types/acl": "^0.4.36",
     "@types/bcrypt": "^2.0.0",
     "@types/body-parser": "^1.17.0",
     "@types/chai": "^4.1.3",
