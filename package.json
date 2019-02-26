@@ -43,7 +43,7 @@
     "@types/node": "^10.1.1",
     "@types/passport": "^0.4.5",
     "@types/passport-jwt": "^3.0.1",
-    "@types/sinon": "^4.3.1",
+    "@types/sinon": "^7.0.7",
     "@types/uuid": "^3.4.3",
     "@types/validator": "^9.4.1",
     "chai": "^4.1.2",
