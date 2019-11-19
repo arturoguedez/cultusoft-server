@@ -40,7 +40,7 @@
     "@types/mocha": "^5.2.0",
     "@types/moment": "^2.13.0",
     "@types/morgan": "^1.7.35",
-    "@types/node": "^10.1.1",
+    "@types/node": "^12.12.11",
     "@types/passport": "^0.4.5",
     "@types/passport-jwt": "^3.0.1",
     "@types/sinon": "^4.3.1",
